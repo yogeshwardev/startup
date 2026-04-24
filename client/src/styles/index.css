@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-primary: #f5f7fb;
+  --bg-elevated: rgba(255, 255, 255, 0.82);
+  --bg-muted: rgba(255, 255, 255, 0.58);
+  --border-primary: rgba(15, 23, 42, 0.1);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.08);
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg-primary: #020617;
+  --bg-elevated: rgba(15, 23, 42, 0.82);
+  --bg-muted: rgba(30, 41, 59, 0.7);
+  --border-primary: rgba(148, 163, 184, 0.14);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --shadow-soft: 0 20px 70px rgba(15, 23, 42, 0.45);
+}
+
+body {
+  @apply min-h-screen font-body antialiased transition-colors duration-300;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  background-image:
+    radial-gradient(circle at top left, rgba(52, 88, 245, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+}
+
+html.dark body {
+  background-image:
+    radial-gradient(circle at top left, rgba(52, 88, 245, 0.2), transparent 28%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.16), transparent 26%),
+    linear-gradient(180deg, #020617 0%, #0f172a 45%, #020617 100%);
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+.app-surface {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.app-muted {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-primary);
+}
