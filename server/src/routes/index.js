@@ -11,6 +11,7 @@ import profileRoutes from "./profileRoutes.js";
 import submissionRoutes from "./submissionRoutes.js";
 import teacherRoutes from "./teacherRoutes.js";
 import adminRoutes from "./adminRoutes.js";
+import placementRoutes from "./placementRoutes.js";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/submissions", submissionRoutes);
 router.use("/", adminRoutes);
 router.use("/", messageRoutes);
 router.use("/", platformRoutes);
+router.use("/placement", placementRoutes);
 
 export default router;

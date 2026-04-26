@@ -1,6 +1,8 @@
 import { Department } from "../models/Department.js";
 import { ActivityLog } from "../models/ActivityLog.js";
 import { User } from "../models/User.js";
+import { MockTest } from "../models/MockTest.js";
+import { Problem } from "../models/Problem.js";
 import { getAdminAnalytics } from "../services/analyticsService.js";
 import { logActivity } from "../services/activityLogService.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -405,4 +407,86 @@ export const getAuditLogs = catchAsync(async (req, res) => {
 export const getAnalytics = catchAsync(async (_req, res) => {
   const analytics = await getAdminAnalytics();
   res.json(analytics);
+});
+
+// Mock Test Management
+export const getAllMockTests = catchAsync(async (req, res) => {
+  const mockTests = await MockTest.find({})
+    .populate("questions.problemId", "title difficulty slug problemCode")
+    .sort({ createdAt: -1 });
+
+  res.json(mockTests);
+});
+
+export const createMockTest = catchAsync(async (req, res) => {
+  const { title, durationMinutes, company, problemIds } = req.body;
+
+  if (!title || !durationMinutes || !problemIds || problemIds.length === 0) {
+    throw new ApiError(400, "Title, duration, and at least one problem are required.");
+  }
+
+  const problems = await Problem.find({ _id: { $in: problemIds } }).select("_id");
+
+  if (problems.length !== problemIds.length) {
+    throw new ApiError(400, "Some problems were not found.");
+  }
+
+  const mockTest = await MockTest.create({
+    title,
+    durationMinutes,
+    company: company || "",
+    questions: problemIds.map((problemId, index) => ({
+      type: "coding",
+      prompt: "",
+      problemId,
+      order: index + 1,
+    })),
+  });
+
+  await mockTest.populate("questions.problemId", "title difficulty slug problemCode");
+  res.status(201).json(mockTest);
+});
+
+export const updateMockTest = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { title, durationMinutes, company, problemIds } = req.body;
+
+  const mockTest = await MockTest.findById(id);
+  if (!mockTest) {
+    throw new ApiError(404, "Mock test not found.");
+  }
+
+  if (title) mockTest.title = title;
+  if (durationMinutes) mockTest.durationMinutes = durationMinutes;
+  if (company !== undefined) mockTest.company = company;
+
+  if (problemIds && problemIds.length > 0) {
+    const problems = await Problem.find({ _id: { $in: problemIds } }).select("_id");
+    if (problems.length !== problemIds.length) {
+      throw new ApiError(400, "Some problems were not found.");
+    }
+
+    mockTest.questions = problemIds.map((problemId, index) => ({
+      type: "coding",
+      prompt: "",
+      problemId,
+      order: index + 1,
+    }));
+  }
+
+  await mockTest.save();
+  await mockTest.populate("questions.problemId", "title difficulty slug problemCode");
+
+  res.json(mockTest);
+});
+
+export const deleteMockTest = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const mockTest = await MockTest.findByIdAndDelete(id);
+  if (!mockTest) {
+    throw new ApiError(404, "Mock test not found.");
+  }
+
+  res.json({ message: "Mock test deleted successfully." });
 });

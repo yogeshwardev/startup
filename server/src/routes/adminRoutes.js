@@ -10,6 +10,10 @@ import {
   getUsers,
   resetUserPassword,
   updateUser,
+  getAllMockTests,
+  createMockTest,
+  updateMockTest,
+  deleteMockTest,
 } from "../controllers/adminController.js";
 import { authorize, protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
@@ -126,5 +130,46 @@ router.patch(
 );
 router.get("/analytics", protect, authorize("ADMIN", "TEACHER"), getAnalytics);
 router.get("/audit-logs", protect, authorize("ADMIN", "TEACHER"), getAuditLogs);
+
+// Mock Test Management routes
+router.get(
+  "/mock-tests",
+  protect,
+  authorize("ADMIN", "TEACHER"),
+  getAllMockTests
+);
+
+router.post(
+  "/mock-tests",
+  protect,
+  authorize("ADMIN", "TEACHER"),
+  validate([
+    body("title").trim().notEmpty().withMessage("Title is required."),
+    body("durationMinutes").isInt({ min: 1, max: 480 }).withMessage("Duration must be between 1 and 480 minutes."),
+    body("company").optional().trim(),
+    body("problemIds").isArray({ min: 1 }).withMessage("At least one problem is required."),
+  ]),
+  createMockTest
+);
+
+router.put(
+  "/mock-tests/:id",
+  protect,
+  authorize("ADMIN", "TEACHER"),
+  validate([
+    body("title").optional().trim().notEmpty().withMessage("Title cannot be empty."),
+    body("durationMinutes").optional().isInt({ min: 1, max: 480 }).withMessage("Duration must be between 1 and 480 minutes."),
+    body("company").optional().trim(),
+    body("problemIds").optional().isArray({ min: 1 }).withMessage("At least one problem is required."),
+  ]),
+  updateMockTest
+);
+
+router.delete(
+  "/mock-tests/:id",
+  protect,
+  authorize("ADMIN", "TEACHER"),
+  deleteMockTest
+);
 
 export default router;

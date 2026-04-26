@@ -162,6 +162,11 @@ const UserProfilePage = () => {
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               @{profile.user.username} · Rank #{profile.user.rank || "--"}
             </p>
+            {profile.user.userCode && (
+              <p className="mt-2 inline-block rounded-lg bg-brand-500/10 px-3 py-1 text-xs font-semibold text-brand-500">
+                User Code: {profile.user.userCode}
+              </p>
+            )}
           </div>
 
           <div className="relative">

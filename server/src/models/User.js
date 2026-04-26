@@ -4,6 +4,12 @@ import { ROLE_LIST, ROLES } from "../constants/roles.js";
 
 const userSchema = new mongoose.Schema(
   {
+    userCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+      match: /^\d{6}$/,
+    },
     name: {
       type: String,
       required: true,
@@ -86,6 +92,30 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function hashPassword(next) {
+  // Generate userCode if not exists
+  if (!this.userCode) {
+    try {
+      // Import Problem model here to avoid circular dependencies
+      const { Problem } = await import("./Problem.js");
+      
+      // Get highest problem code
+      const highestProblem = await Problem.findOne().sort({ problemCode: -1 }).select("problemCode");
+      const problemCodeNum = highestProblem?.problemCode ? parseInt(highestProblem.problemCode) : 0;
+      
+      // Get highest user code
+      const highestUser = await this.constructor.findOne().sort({ userCode: -1 }).select("userCode");
+      const userCodeNum = highestUser?.userCode ? parseInt(highestUser.userCode) : problemCodeNum;
+      
+      // Generate next user code
+      const nextCode = userCodeNum + 1;
+      this.userCode = String(nextCode).padStart(6, "0");
+    } catch (error) {
+      console.error("Error generating userCode:", error);
+      next(error);
+      return;
+    }
+  }
+
   if (!this.isModified("password")) {
     return next();
   }

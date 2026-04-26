@@ -221,6 +221,7 @@ const buildProfilePayload = async (viewer, profileUser) => {
   return {
     user: {
       id: profileUser._id,
+      userCode: profileUser.userCode,
       displayName: getProfileDisplayName(profileUser),
       username: profileUser.email.split("@")[0],
       email: profileUser.email,
@@ -318,10 +319,10 @@ export const searchProfiles = catchAsync(async (req, res) => {
 export const getUserProfile = catchAsync(async (req, res) => {
   const [viewer, profileUser] = await Promise.all([
     User.findById(req.user._id).select(
-      "email department year role registrationNumber followers following profile"
+      "email department year role registrationNumber userCode followers following profile"
     ),
     User.findById(req.params.id).select(
-      "email department year role registrationNumber followers following profile"
+      "email department year role registrationNumber userCode followers following profile"
     ),
   ]);
 

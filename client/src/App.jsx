@@ -3,26 +3,38 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AppShell from "./layouts/AppShell";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ContestManagementPage from "./pages/admin/ContestManagementPage";
+import MockTestManagementPage from "./pages/admin/MockTestManagementPage";
 import ExistingProblemsPage from "./pages/admin/ExistingProblemsPage";
 import ProblemManagementPage from "./pages/admin/ProblemManagementPage";
 import UserCreatePage from "./pages/admin/UserCreatePage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
+import CompanyManagementPage from "./pages/admin/CompanyManagementPage";
+import QuestionManagementPage from "./pages/admin/QuestionManagementPage";
 import AuthPage from "./pages/AuthPage";
 import AnalyticsPage from "./pages/shared/AnalyticsPage";
 import ConnectionsPage from "./pages/shared/ConnectionsPage";
 import DepartmentsPage from "./pages/shared/DepartmentsPage";
 import SettingsPage from "./pages/shared/SettingsPage";
 import UserProfilePage from "./pages/shared/UserProfilePage";
+import CompanyListPage from "./pages/shared/CompanyListPage";
+import CompanyDetailPage from "./pages/shared/CompanyDetailPage";
 import ContestDetailPage from "./pages/student/ContestDetailPage";
 import ContestListPage from "./pages/student/ContestListPage";
 import DepartmentWarPage from "./pages/student/DepartmentWarPage";
 import LeaderboardPage from "./pages/student/LeaderboardPage";
 import ProblemWorkspacePage from "./pages/student/ProblemWorkspacePage";
+import PlacementProblemWorkspacePage from "./pages/student/PlacementProblemWorkspacePage";
 import ProblemsPage from "./pages/student/ProblemsPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import ContactAdminPage from "./pages/teacher/ContactAdminPage";
 import TeacherProblemsPage from "./pages/teacher/TeacherProblemsPage";
+import TeacherMockTestPage from "./pages/teacher/TeacherMockTestPage";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
+import PlacementHubPage from "./pages/student/PlacementHubPage";
+import PlacementCompanyDetailPage from "./pages/student/PlacementCompanyDetailPage";
+import MockTestPage from "./pages/student/MockTestPage";
+import MockTestResultPage from "./pages/student/MockTestResultPage";
+import PlacementLeaderboardPage from "./pages/student/PlacementLeaderboardPage";
 import { useAuth } from "./hooks/useAuth";
 
 const App = () => {
@@ -190,6 +202,16 @@ const App = () => {
         }
       />
       <Route
+        path="/teacher/mock-tests"
+        element={
+          <ProtectedRoute roles={["TEACHER", "ADMIN"]}>
+            <AppShell>
+              <TeacherMockTestPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/teacher/analytics"
         element={
           <ProtectedRoute roles={["TEACHER", "ADMIN"]}>
@@ -280,6 +302,16 @@ const App = () => {
         }
       />
       <Route
+        path="/admin/mock-tests"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AppShell>
+              <MockTestManagementPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/departments"
         element={
           <ProtectedRoute roles={["ADMIN"]}>
@@ -305,6 +337,106 @@ const App = () => {
           <ProtectedRoute roles={["ADMIN"]}>
             <AppShell>
               <SettingsPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/placement/companies"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AppShell>
+              <CompanyManagementPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/placement/questions"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AppShell>
+              <QuestionManagementPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <CompanyListPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/hub"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <PlacementHubPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/company/:name"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <CompanyDetailPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/company/:companyId"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <PlacementCompanyDetailPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/question/:id"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <PlacementProblemWorkspacePage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/mock-test"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <MockTestPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/mock-result"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <MockTestResultPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/placement/leaderboard"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <PlacementLeaderboardPage />
             </AppShell>
           </ProtectedRoute>
         }

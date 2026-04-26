@@ -8,6 +8,7 @@ const buildAuthResponse = (user) => ({
   token: signToken({ id: user._id, role: user.role }),
   user: {
     id: user._id,
+    userCode: user.userCode,
     name: user.name,
     email: user.email,
     registrationNumber: user.registrationNumber,

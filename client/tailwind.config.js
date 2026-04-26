@@ -6,18 +6,18 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: "#f3f7ff",
-          100: "#dbe7ff",
-          200: "#bed2ff",
-          300: "#8fb0ff",
-          400: "#5d83ff",
-          500: "#3458f5",
-          600: "#2643db",
-          700: "#2036b1",
-          800: "#1f318b",
-          900: "#1f2e6d"
+          50: "#f5f3ff",
+          100: "#ede9fe",
+          200: "#ddd6fe",
+          300: "#c4b5fd",
+          400: "#a78bfa",
+          500: "#8b5cf6",
+          600: "#7c3aed",
+          700: "#6d28d9",
+          800: "#5b21b6",
+          900: "#4c1d95"
         },
-        accent: "#f97316",
+        accent: "#06b6d4",
         panel: "#0f172a",
         soft: "#1e293b"
       },
@@ -26,7 +26,7 @@ export default {
         body: ["Manrope", "ui-sans-serif", "system-ui"]
       },
       boxShadow: {
-        glow: "0 20px 80px rgba(52, 88, 245, 0.35)"
+        glow: "0 20px 80px rgba(139, 92, 246, 0.25)"
       }
     },
   },
