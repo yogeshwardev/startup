@@ -7,6 +7,7 @@ import { useToast } from "../../hooks/useToast";
 
 const defaultContest = {
   title: "",
+  description: "",
   startTime: "",
   endTime: "",
   selectedProblemIds: [],
@@ -86,6 +87,7 @@ const ContestManagementPage = () => {
       setSaving(true);
       await http.post("/contests", {
         title: contestForm.title,
+        description: contestForm.description,
         startTime: contestForm.startTime,
         endTime: contestForm.endTime,
         problems: contestForm.selectedProblemIds.map((problemId, index) => ({
@@ -133,9 +135,31 @@ const ContestManagementPage = () => {
                     title: event.target.value,
                   }))
                 }
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                 placeholder="Daily coding showdown"
                 required
+              />
+            </div>
+
+            <div>
+              <label
+                className="mb-2 block text-sm font-medium text-slate-300"
+                htmlFor="contest-desc"
+              >
+                Contest description
+              </label>
+              <textarea
+                id="contest-desc"
+                value={contestForm.description}
+                onChange={(event) =>
+                  setContestForm((current) => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
+                }
+                rows={3}
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400 custom-scrollbar"
+                placeholder="Provide a short description of what this contest is about..."
               />
             </div>
 
@@ -157,7 +181,7 @@ const ContestManagementPage = () => {
                       startTime: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-brand-400"
                   required
                 />
               </div>
@@ -179,7 +203,7 @@ const ContestManagementPage = () => {
                       endTime: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-brand-400"
                   required
                 />
               </div>
@@ -198,12 +222,12 @@ const ContestManagementPage = () => {
                       problemCodes: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                   placeholder="Add by problem ID, comma separated"
                 />
                 <button
                   type="button"
-                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-white"
+                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-[var(--text-primary)]"
                   onClick={addProblemsByCode}
                 >
                   Add IDs
@@ -213,7 +237,7 @@ const ContestManagementPage = () => {
                 {problems.map((problem) => (
                   <label
                     key={problem._id}
-                    className="app-muted flex cursor-pointer items-start gap-3 rounded-[1.5rem] p-4"
+                    className="card-surface flex cursor-pointer items-start gap-3 rounded-[1.5rem] p-4"
                   >
                     <input
                       type="checkbox"
@@ -222,7 +246,7 @@ const ContestManagementPage = () => {
                       className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-950 text-brand-500 focus:ring-brand-400"
                     />
                     <div>
-                      <p className="font-semibold text-white">{problem.title}</p>
+                      <p className="font-semibold text-[var(--text-primary)]">{problem.title}</p>
                       <p className="mt-1 text-sm text-slate-400">
                         ID {problem.problemCode} • {problem.difficulty} • {problem.slug}
                       </p>
@@ -235,7 +259,7 @@ const ContestManagementPage = () => {
             <button
               type="submit"
               disabled={saving || contestForm.selectedProblemIds.length === 0}
-              className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {saving ? "Creating..." : "Create contest"}
             </button>
@@ -249,9 +273,9 @@ const ContestManagementPage = () => {
                 {selectedProblems.map((problem, index) => (
                   <div
                     key={problem._id}
-                    className="app-muted rounded-[1.5rem] p-4"
+                    className="card-surface rounded-[1.5rem] p-4"
                   >
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {index + 1}. {problem.title}
                     </p>
                     <p className="mt-1 text-sm text-slate-400">
@@ -274,9 +298,9 @@ const ContestManagementPage = () => {
                 {contests.map((contest) => (
                   <div
                     key={contest._id}
-                    className="app-muted rounded-[1.5rem] p-4"
+                    className="card-surface rounded-[1.5rem] p-4"
                   >
-                    <p className="font-semibold text-white">{contest.title}</p>
+                    <p className="font-semibold text-[var(--text-primary)]">{contest.title}</p>
                     <p className="mt-1 text-sm text-slate-400">
                       {new Date(contest.startTime).toLocaleString()} to{" "}
                       {new Date(contest.endTime).toLocaleString()}
@@ -301,3 +325,6 @@ const ContestManagementPage = () => {
 };
 
 export default ContestManagementPage;
+
+
+

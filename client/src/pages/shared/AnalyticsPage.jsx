@@ -46,8 +46,8 @@ const AnalyticsPage = () => {
                   {analytics.departmentPerformance.map((entry) => (
                     <div key={entry._id}>
                       <div className="mb-2 flex items-center justify-between text-sm">
-                        <span className="font-medium text-slate-700 dark:text-slate-200">{entry._id}</span>
-                        <span className="text-slate-500 dark:text-slate-400">{entry.solved} solved</span>
+                        <span className="font-medium text-slate-700">{entry._id}</span>
+                        <span className="text-slate-500">{entry.solved} solved</span>
                       </div>
                       <div className="h-3 rounded-full bg-slate-200 dark:bg-white/10">
                         <div className="h-3 rounded-full bg-brand-500" style={{ width: `${Math.min(entry.score, 100)}%` }} />
@@ -85,3 +85,6 @@ const AnalyticsPage = () => {
 };
 
 export default AnalyticsPage;
+
+
+

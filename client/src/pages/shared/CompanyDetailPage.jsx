@@ -61,7 +61,7 @@ const CompanyDetailPage = () => {
         action={
           <button
             onClick={() => navigate("/placement")}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -70,7 +70,7 @@ const CompanyDetailPage = () => {
       />
 
       {/* Tab Navigation */}
-      <div className="app-surface rounded-xl border overflow-hidden">
+      <div className="card-surface rounded-xl border overflow-hidden">
         <div className="flex gap-0 overflow-x-auto">
           {tabs.map((tab) => (
             <button
@@ -78,8 +78,8 @@ const CompanyDetailPage = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "border-brand-600 dark:border-brand-400 text-brand-600 dark:text-brand-400 bg-slate-50 dark:bg-slate-800"
-                  : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                  ? "border-brand-600 text-brand-600 bg-slate-50"
+                  : "border-transparent text-slate-600 hover:dark:hover:text-slate-200"
               }`}
             >
               {tab.label}
@@ -89,7 +89,7 @@ const CompanyDetailPage = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="app-surface rounded-xl border p-6">
+      <div className="card-surface rounded-xl border p-6">
         {activeTab === "interview-process" && (
           <InterviewProcessTab company={company} />
         )}
@@ -106,3 +106,6 @@ const CompanyDetailPage = () => {
 };
 
 export default CompanyDetailPage;
+
+
+

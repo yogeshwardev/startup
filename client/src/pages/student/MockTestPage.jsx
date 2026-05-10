@@ -360,23 +360,23 @@ const MockTestPage = () => {
         <SectionCard title="Test Details">
           <div className="grid gap-6 md:grid-cols-2 mb-6">
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-3">Test Information</h3>
+              <h3 className="font-semibold mb-3">Test Information</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <span className="text-brand-600">•</span>
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-slate-600">
                     <strong>Questions:</strong> {MOCK_TEST_QUESTIONS.length}
                   </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-brand-600">•</span>
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-slate-600">
                     <strong>Duration:</strong> 90 minutes
                   </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-brand-600">•</span>
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-slate-600">
                     <strong>Difficulty:</strong> Mixed (Easy, Medium, Hard)
                   </span>
                 </li>
@@ -384,17 +384,17 @@ const MockTestPage = () => {
             </div>
 
             <div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-3">Requirements</h3>
+              <h3 className="font-semibold mb-3">Requirements</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2">
                   <Clock className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-slate-600">
                     90-minute timer cannot be paused or extended
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-slate-600">
                     Code in multiple programming languages: Python, JavaScript, Java, C++
                   </span>
                 </li>
@@ -405,14 +405,14 @@ const MockTestPage = () => {
           <div className="flex gap-3">
             <button
               onClick={() => setTestStarted(true)}
-              className="flex-1 flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+              className="flex-1 flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-[var(--text-primary)] font-semibold py-3 px-6 rounded-lg transition"
             >
               <Play className="w-5 h-5" />
               Start Mock Test
             </button>
             <button
               onClick={() => navigate(-1)}
-              className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold py-3 px-6 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+              className="flex-1 bg-slate-100 font-semibold py-3 px-6 rounded-lg hover:bg-slate-200 transition"
             >
               Back to Placement
             </button>
@@ -432,16 +432,16 @@ const MockTestPage = () => {
         />
 
         <SectionCard title="Malpractice Detection">
-          <div className="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 rounded-lg p-6">
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-6">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-1" />
+              <AlertCircle className="w-6 h-6 text-rose-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-2">Test Terminated</h3>
-                <p className="text-sm text-slate-700 dark:text-slate-300 mb-4">
+                <h3 className="font-bold mb-2">Test Terminated</h3>
+                <p className="text-sm text-slate-700 mb-4">
                   Reason: {malpracticeReason}
                 </p>
                 {warningCount > 0 && (
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-slate-600">
                     Violations detected: {warningCount}/{MAX_WARNINGS}
                   </p>
                 )}
@@ -453,7 +453,7 @@ const MockTestPage = () => {
         <div className="flex gap-3">
           <button
             onClick={() => navigate("/placement")}
-            className="flex-1 bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 text-white font-semibold py-3 px-6 rounded-lg transition"
+            className="flex-1 bg-brand-600 hover:bg-brand-700 text-[var(--text-primary)] font-semibold py-3 px-6 rounded-lg transition"
           >
             Return to Placement
           </button>
@@ -463,17 +463,17 @@ const MockTestPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-950" ref={fullscreenTargetRef}>
+    <div className="flex h-screen bg-slate-50" ref={fullscreenTargetRef}>
       {/* Warning Banner */}
       {warningMessage && (
-        <div className="fixed top-0 left-0 right-0 bg-amber-50 dark:bg-amber-500/10 border-b border-amber-200 dark:border-amber-500/30 px-6 py-3 flex items-start gap-3 z-40">
-          <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+        <div className="fixed top-0 left-0 right-0 bg-amber-50 border-b border-amber-200 px-6 py-3 flex items-start gap-3 z-40">
+          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-amber-900 dark:text-amber-300">{warningMessage}</p>
+            <p className="text-sm font-semibold text-amber-900">{warningMessage}</p>
             {needsFullscreenRestore && (
               <button
                 onClick={requestSecureFullscreen}
-                className="mt-2 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline"
+                className="mt-2 text-xs font-semibold text-amber-700 hover:underline"
               >
                 Restore Fullscreen →
               </button>
@@ -485,21 +485,21 @@ const MockTestPage = () => {
       {/* Confirm Exit Modal */}
       {showConfirmExit && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Submit Test?</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold mb-2">Submit Test?</h3>
+            <p className="text-slate-600 mb-6">
               Are you sure you want to submit? You have {formatTime(timeLeft)} remaining.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowConfirmExit(false)}
-                className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                className="flex-1 px-4 py-2 bg-slate-100 font-semibold rounded-lg hover:bg-slate-200 transition"
               >
                 Continue
               </button>
               <button
                 onClick={handleSubmitTest}
-                className="flex-1 px-4 py-2 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-700 transition"
+                className="flex-1 px-4 py-2 bg-brand-600 text-[var(--text-primary)] font-semibold rounded-lg hover:bg-brand-700 transition"
               >
                 Submit
               </button>
@@ -509,9 +509,9 @@ const MockTestPage = () => {
       )}
 
       {/* Sidebar - Questions List */}
-      <div className="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 overflow-y-auto hidden lg:flex flex-col">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-          <h3 className="font-semibold text-slate-900 dark:text-white text-sm uppercase tracking-wider">
+      <div className="w-80 bg-white border-r border-slate-200 overflow-y-auto hidden lg:flex flex-col">
+        <div className="p-4 border-b border-slate-200">
+          <h3 className="font-semibold text-sm uppercase tracking-wider">
             Questions ({currentQuestionIdx + 1}/{MOCK_TEST_QUESTIONS.length})
           </h3>
         </div>
@@ -522,10 +522,10 @@ const MockTestPage = () => {
               onClick={() => setCurrentQuestionIdx(idx)}
               className={`w-full text-left px-3 py-3 rounded-lg transition text-sm font-medium ${
                 idx === currentQuestionIdx
-                  ? "bg-brand-600 dark:bg-brand-500 text-white shadow-md"
+                  ? "bg-brand-600 text-[var(--text-primary)] shadow-md"
                   : submissions[q.id]
-                  ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/50"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
+                  ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                  : "bg-slate-100 hover:bg-slate-200"
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -543,12 +543,12 @@ const MockTestPage = () => {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+        <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white truncate">
+            <h1 className="text-xl font-bold truncate">
               {currentQuestion.title}
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            <p className="text-sm text-slate-600 mt-1">
               Question {currentQuestionIdx + 1} of {MOCK_TEST_QUESTIONS.length}
             </p>
           </div>
@@ -556,16 +556,16 @@ const MockTestPage = () => {
           <div className="flex items-center gap-4 ml-6">
             <div className="text-right flex-shrink-0">
               <div className={`text-2xl font-bold font-mono ${
-                timeLeft < 600 ? "text-rose-600 dark:text-rose-400" : "text-slate-900 dark:text-white"
+                timeLeft < 600 ? "text-rose-600" : "text-slate-900"
               }`}>
                 {formatTime(timeLeft)}
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Time Left</p>
+              <p className="text-xs text-slate-500">Time Left</p>
             </div>
 
             <button
               onClick={handleExitTest}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 dark:bg-rose-500 dark:hover:bg-rose-600 text-white font-semibold rounded-lg transition whitespace-nowrap flex-shrink-0"
+              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-[var(--text-primary)] font-semibold rounded-lg transition whitespace-nowrap flex-shrink-0"
             >
               <X className="w-4 h-4" />
               Submit
@@ -576,42 +576,42 @@ const MockTestPage = () => {
         {/* Content */}
         <div className="flex-1 overflow-hidden flex">
           {/* Description Panel */}
-          <div className="w-1/2 border-r border-slate-200 dark:border-slate-700 overflow-y-auto">
+          <div className="w-1/2 border-r border-slate-200 overflow-y-auto">
             <div className="p-6">
               <div className="flex gap-2 mb-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   currentQuestion.difficulty === "Easy"
-                    ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                    ? "bg-emerald-100 text-emerald-700"
                     : currentQuestion.difficulty === "Medium"
-                    ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300"
-                    : "bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300"
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-rose-100 text-rose-700"
                 }`}>
                   {currentQuestion.difficulty}
                 </span>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
                   {currentQuestion.topic}
                 </span>
               </div>
 
               <div className="mb-6">
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Description</h3>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                <h3 className="font-semibold mb-2">Description</h3>
+                <p className="text-slate-700 leading-relaxed">
                   {currentQuestion.description}
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-3">Examples</h3>
+                <h3 className="font-semibold mb-3">Examples</h3>
                 <div className="space-y-3">
                   {currentQuestion.examples.map((ex, idx) => (
                     <div
                       key={idx}
-                      className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700"
+                      className="bg-slate-50 rounded-lg p-4 border border-slate-200"
                     >
-                      <p className="text-sm font-mono text-slate-600 dark:text-slate-400 mb-2">
+                      <p className="text-sm font-mono text-slate-600 mb-2">
                         Input: {ex.input}
                       </p>
-                      <p className="text-sm font-mono text-emerald-600 dark:text-emerald-400">
+                      <p className="text-sm font-mono text-emerald-600">
                         Output: {ex.output}
                       </p>
                     </div>
@@ -623,7 +623,7 @@ const MockTestPage = () => {
                 <button
                   onClick={handlePrevQuestion}
                   disabled={currentQuestionIdx === 0}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-200 transition"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Previous
@@ -631,7 +631,7 @@ const MockTestPage = () => {
                 <button
                   onClick={handleNextQuestion}
                   disabled={currentQuestionIdx === MOCK_TEST_QUESTIONS.length - 1}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-200 transition"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -643,7 +643,7 @@ const MockTestPage = () => {
           {/* Code Editor Panel */}
           <div className="w-1/2 flex flex-col">
             {/* Language and Copy */}
-            <div className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 flex items-center justify-between">
+            <div className="border-b border-slate-200 bg-white px-4 py-3 flex items-center justify-between">
               <div className="flex gap-2">
                 {LANGUAGES.map((lang) => (
                   <button
@@ -651,8 +651,8 @@ const MockTestPage = () => {
                     onClick={() => setLanguage(lang.value)}
                     className={`px-3 py-1.5 rounded text-sm font-medium transition ${
                       language === lang.value
-                        ? "bg-brand-600 text-white"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                        ? "bg-brand-600 text-[var(--text-primary)]"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                     }`}
                   >
                     {lang.label}
@@ -661,7 +661,7 @@ const MockTestPage = () => {
               </div>
               <button
                 onClick={handleCopyCode}
-                className="flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                className="flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition"
               >
                 {copiedCode ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 {copiedCode ? "Copied" : "Copy"}
@@ -669,7 +669,7 @@ const MockTestPage = () => {
             </div>
 
             {/* Code Editor */}
-            <div className="flex-1 overflow-hidden border-b border-slate-200 dark:border-slate-700">
+            <div className="flex-1 overflow-hidden border-b border-slate-200">
               <CodeEditor
                 language={language}
                 value={currentCode}
@@ -678,20 +678,20 @@ const MockTestPage = () => {
             </div>
 
             {/* Custom Input */}
-            <div className="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3">
-              <label className="text-sm font-semibold text-slate-900 dark:text-white mb-2 block">
+            <div className="border-b border-slate-200 bg-white px-4 py-3">
+              <label className="text-sm font-semibold mb-2 block">
                 Custom Input
               </label>
               <textarea
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 placeholder="Enter test input here..."
-                className="w-full h-20 px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full h-20 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
 
             {/* Output */}
-            <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-900 text-slate-300 px-4 py-3 font-mono text-sm overflow-y-auto flex-1">
+            <div className="border-b border-slate-200 text-slate-300 px-4 py-3 font-mono text-sm overflow-y-auto flex-1">
               <div className="text-xs font-semibold text-slate-400 mb-2">OUTPUT</div>
               {runResult ? (
                 <pre className="whitespace-pre-wrap break-words">{runResult.stderr || runResult.stdout}</pre>
@@ -701,11 +701,11 @@ const MockTestPage = () => {
             </div>
 
             {/* Actions */}
-            <div className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 flex gap-3">
+            <div className="border-t border-slate-200 bg-white p-4 flex gap-3">
               <button
                 onClick={handleRun}
                 disabled={running}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 text-white font-semibold rounded-lg disabled:opacity-50 transition"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-[var(--text-primary)] font-semibold rounded-lg disabled:opacity-50 transition"
               >
                 <Play className="w-4 h-4" />
                 {running ? "Running..." : "Run Code"}
@@ -713,7 +713,7 @@ const MockTestPage = () => {
               <button
                 onClick={handleSubmitQuestion}
                 disabled={submitting || submissions[currentQuestion.id]}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-semibold rounded-lg disabled:opacity-50 transition"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-[var(--text-primary)] font-semibold rounded-lg disabled:opacity-50 transition"
               >
                 <Send className="w-4 h-4" />
                 {submissions[currentQuestion.id] ? "Submitted ✓" : submitting ? "Submitting..." : "Submit"}
@@ -727,3 +727,6 @@ const MockTestPage = () => {
 };
 
 export default MockTestPage;
+
+
+

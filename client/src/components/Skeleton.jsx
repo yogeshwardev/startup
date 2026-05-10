@@ -1,5 +1,11 @@
 const Skeleton = ({ className = "" }) => (
-  <div className={`animate-pulse rounded-2xl bg-slate-200/70 dark:bg-white/10 ${className}`} />
+  <div
+    className={`rounded-xl animate-shimmer ${className}`}
+    style={{
+      background: "var(--bg-card)",
+      border: "1px solid var(--border-subtle)",
+    }}
+  />
 );
 
 export default Skeleton;

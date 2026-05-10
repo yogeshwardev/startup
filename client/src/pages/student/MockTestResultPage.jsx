@@ -41,7 +41,7 @@ const MockTestResultPage = () => {
       {/* Header */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
+        className="flex items-center gap-2 text-slate-600 hover:dark:hover:text-[var(--text-primary)] transition"
       >
         <ArrowLeft className="w-4 h-4" />
         <span className="text-sm font-medium">Back</span>
@@ -54,42 +54,42 @@ const MockTestResultPage = () => {
       />
 
       {/* Score Card */}
-      <div className="app-surface rounded-xl border p-8 text-center">
-        <p className="text-slate-600 dark:text-slate-400 text-sm font-medium mb-2">
+      <div className="card-surface rounded-xl border p-8 text-center">
+        <p className="text-slate-600 text-sm font-medium mb-2">
           YOUR SCORE
         </p>
         <div className="flex items-baseline justify-center gap-1 mb-2">
-          <span className="text-6xl font-bold text-brand-600 dark:text-brand-400">
+          <span className="text-6xl font-bold text-brand-600">
             {score}
           </span>
-          <span className="text-2xl text-slate-600 dark:text-slate-400">%</span>
+          <span className="text-2xl text-slate-600">%</span>
         </div>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
+        <p className="text-slate-600 mb-6">
           {solved} out of {totalQuestions} questions solved correctly
         </p>
 
-        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-200">
           <div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+            <p className="text-xs text-slate-600 mb-2">
               ACCURACY
             </p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-slate-900">
               {accuracy}%
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+            <p className="text-xs text-slate-600 mb-2">
               TIME TAKEN
             </p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-slate-900">
               {formatTime(timeTaken)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+            <p className="text-xs text-slate-600 mb-2">
               RANK
             </p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-slate-900">
               #1245
             </p>
           </div>
@@ -98,17 +98,17 @@ const MockTestResultPage = () => {
 
       {/* Action Buttons */}
       <div className="flex gap-3 flex-wrap">
-        <button className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 text-white font-semibold rounded-lg transition">
+        <button className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-[var(--text-primary)] font-semibold rounded-lg transition">
           <Download className="w-4 h-4" />
           Download Report
         </button>
-        <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+        <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 font-semibold rounded-lg hover:bg-slate-200 transition">
           <Share2 className="w-4 h-4" />
           Share Results
         </button>
         <button
           onClick={() => navigate("/placement/company/1")}
-          className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition ml-auto"
+          className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 font-semibold rounded-lg hover:bg-slate-200 transition ml-auto"
         >
           <TrendingUp className="w-4 h-4" />
           Retake Test
@@ -118,8 +118,8 @@ const MockTestResultPage = () => {
       {/* Performance Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Category Performance */}
-        <div className="app-surface rounded-xl border p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+        <div className="card-surface rounded-xl border p-6">
+          <h3 className="text-lg font-semibold mb-6">
             Performance by Category
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -142,8 +142,8 @@ const MockTestResultPage = () => {
         </div>
 
         {/* Difficulty Distribution */}
-        <div className="app-surface rounded-xl border p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+        <div className="card-surface rounded-xl border p-6">
+          <h3 className="text-lg font-semibold mb-6">
             Difficulty Breakdown
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -173,25 +173,25 @@ const MockTestResultPage = () => {
       </div>
 
       {/* Weak Topics */}
-      <div className="app-surface rounded-xl border p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+      <div className="card-surface rounded-xl border p-6">
+        <h3 className="text-lg font-semibold mb-4">
           Topics to Improve
         </h3>
         <div className="space-y-3">
           {weakTopics.map((topic, idx) => (
             <div key={idx} className="flex items-center gap-4">
               <div className="flex-1">
-                <p className="font-semibold text-slate-900 dark:text-white">
+                <p className="font-semibold text-slate-900">
                   {topic.name}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500">
                   {topic.attempts} attempts
                 </p>
               </div>
 
               {/* Accuracy bar */}
               <div className="w-32">
-                <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
                       topic.accuracy >= 75
@@ -205,7 +205,7 @@ const MockTestResultPage = () => {
                 </div>
               </div>
 
-              <p className="font-semibold text-slate-900 dark:text-white w-12 text-right">
+              <p className="font-semibold w-12 text-right">
                 {topic.accuracy}%
               </p>
             </div>
@@ -214,11 +214,11 @@ const MockTestResultPage = () => {
       </div>
 
       {/* Recommendations */}
-      <div className="bg-blue-50 dark:bg-blue-500/15 border border-blue-200 dark:border-blue-500/30 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-blue-900 mb-4">
           📋 Recommendations
         </h3>
-        <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+        <ul className="space-y-2 text-sm text-slate-700">
           <li>
             ✓ Your score is <strong>above average</strong>. You're doing well!
           </li>
@@ -236,50 +236,50 @@ const MockTestResultPage = () => {
 
       {/* Comparison Stats */}
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+        <div className="card-surface rounded-xl border p-5 text-center">
+          <p className="text-sm text-slate-600 mb-2">
             YOUR RANK
           </p>
-          <p className="text-3xl font-bold text-brand-600 dark:text-brand-400">
+          <p className="text-3xl font-bold text-brand-600">
             #1245
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             out of 10,000 students
           </p>
         </div>
 
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+        <div className="card-surface rounded-xl border p-5 text-center">
+          <p className="text-sm text-slate-600 mb-2">
             AVG SCORE
           </p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white">
+          <p className="text-3xl font-bold text-slate-900">
             62%
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             You scored {score - 62}% above avg
           </p>
         </div>
 
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+        <div className="card-surface rounded-xl border p-5 text-center">
+          <p className="text-sm text-slate-600 mb-2">
             AVG TIME
           </p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white">
+          <p className="text-3xl font-bold text-slate-900">
             75 min
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             You took {Math.round(timeTaken / 60)} minutes
           </p>
         </div>
 
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+        <div className="card-surface rounded-xl border p-5 text-center">
+          <p className="text-sm text-slate-600 mb-2">
             BEST SCORE
           </p>
-          <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+          <p className="text-3xl font-bold text-emerald-600">
             85%
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Previous attempt
           </p>
         </div>
@@ -289,3 +289,6 @@ const MockTestResultPage = () => {
 };
 
 export default MockTestResultPage;
+
+
+

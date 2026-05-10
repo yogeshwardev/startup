@@ -13,7 +13,7 @@ const slugify = (value) =>
     .replace(/(^-|-$)/g, "");
 
 const generateProblemCode = () =>
-  String(Math.floor(100000 + Math.random() * 900000));
+  "CC" + String(Math.floor(100000 + Math.random() * 900000));
 
 const assignProblemCode = async (problem) => {
   if (problem.problemCode) {
@@ -55,23 +55,28 @@ export const getProblems = catchAsync(async (req, res) => {
     filter.$or = [
       { title: { $regex: searchValue, $options: "i" } },
       { problemCode: { $regex: searchValue, $options: "i" } },
+      { tags: { $regex: searchValue, $options: "i" } },
     ];
   }
 
   const problemDocs = await Problem.find(filter).sort({ createdAt: -1 });
   const problems = await Promise.all(problemDocs.map((problem) => assignProblemCode(problem).then((entry) => entry.toObject())));
-  const submittedProblemIds = await Submission.distinct("problemId", {
-    userId: req.user._id,
-    contestId: null,
-  });
-  const malpracticeProblemIds = await PracticeSession.distinct("problemId", {
-    userId: req.user._id,
-    malpractice: true,
-  });
-  const bookmarks = await Bookmark.find({ userId: req.user._id }).lean();
+  
+  const [submittedProblemIds, malpracticeProblemIds, bookmarks, solvedCounts] = await Promise.all([
+    Submission.distinct("problemId", { userId: req.user._id, contestId: null, status: "Accepted" }),
+    PracticeSession.distinct("problemId", { userId: req.user._id, malpractice: true }),
+    Bookmark.find({ userId: req.user._id }).lean(),
+    Submission.aggregate([
+      { $match: { status: "Accepted", contestId: null } },
+      { $group: { _id: { problemId: "$problemId", userId: "$userId" } } },
+      { $group: { _id: "$_id.problemId", count: { $sum: 1 } } }
+    ])
+  ]);
+
   const submittedSet = new Set(submittedProblemIds.map(String));
   const malpracticeSet = new Set(malpracticeProblemIds.map(String));
   const bookmarkSet = new Set(bookmarks.map((item) => String(item.problemId)));
+  const solvedCountMap = new Map(solvedCounts.map(item => [String(item._id), item.count]));
 
   const statusFilter = req.query.status;
   const decorated = problems.map((problem) => ({
@@ -80,11 +85,13 @@ export const getProblems = catchAsync(async (req, res) => {
     submitted: submittedSet.has(String(problem._id)),
     malpractice: malpracticeSet.has(String(problem._id)),
     bookmarked: bookmarkSet.has(String(problem._id)),
+    totalSolved: solvedCountMap.get(String(problem._id)) || 0,
   }));
 
+  // Automatically hide solved problems unless explicitly requesting them
   const filtered = statusFilter
     ? decorated.filter((problem) => (statusFilter.toLowerCase() === "solved" ? problem.solved : !problem.solved))
-    : decorated;
+    : decorated.filter((problem) => !problem.solved);
 
   res.json(filtered);
 });

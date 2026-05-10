@@ -83,13 +83,13 @@ const ExistingProblemsPage = () => {
           <div className="flex flex-wrap gap-3">
             <Link
               to="/admin/problems"
-              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-white/10 dark:text-slate-200"
+              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-white/10"
             >
               Back to problem creation
             </Link>
             <button
               type="button"
-              className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-900"
+              className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-primary)] dark:bg-white"
               onClick={loadProblems}
             >
               Refresh
@@ -100,7 +100,7 @@ const ExistingProblemsPage = () => {
 
       <SectionCard title="Problem bank">
         <div className="mb-4 grid gap-3 md:grid-cols-2">
-          <label className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3">
+          <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               className="w-full bg-transparent text-sm outline-none"
@@ -128,22 +128,22 @@ const ExistingProblemsPage = () => {
             {filteredProblems.map((problem) => (
               <div
                 key={problem._id}
-                className="app-muted flex flex-wrap items-start justify-between gap-4 rounded-[1.5rem] p-4"
+                className="card-surface flex flex-wrap items-start justify-between gap-4 rounded-[1.5rem] p-4"
               >
                 <div className="space-y-1">
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                  <p className="font-semibold text-slate-900">
                     {problem.title}
                   </p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-slate-500">
                     ID {problem.problemCode} · {problem.slug} · {problem.difficulty}
                   </p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                  <p className="text-sm text-slate-500">
                     {problem.tags?.join(", ") || "No tags"}
                   </p>
                 </div>
                 <button
                   type="button"
-                  className="rounded-2xl bg-red-500 px-3 py-2 text-xs font-semibold text-white"
+                  className="rounded-2xl bg-red-500 px-3 py-2 text-xs font-semibold text-[var(--text-primary)]"
                   onClick={() => handleDeleteProblem(problem._id)}
                 >
                   Delete
@@ -167,3 +167,6 @@ const ExistingProblemsPage = () => {
 };
 
 export default ExistingProblemsPage;
+
+
+

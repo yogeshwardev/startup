@@ -170,16 +170,16 @@ const ConnectionsPage = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-500">
               Community
             </p>
-            <h1 className="mt-2 text-3xl font-semibold text-slate-900 dark:text-white">
+            <h1 className="mt-2 text-3xl font-semibold text-slate-900">
               {connections.user.displayName}'s network
             </h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-2 text-sm text-slate-500">
               Browse followers, following, and chat from one dedicated space.
             </p>
           </div>
           <Link
             to={profileId === user?.id ? "/profile" : `/profile/${profileId}`}
-            className="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/5"
+            className="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:hover:bg-white/5"
           >
             Back to profile
           </Link>
@@ -196,8 +196,8 @@ const ConnectionsPage = () => {
                   type="button"
                   className={`flex-1 rounded-[1rem] px-4 py-3 text-sm font-semibold transition ${
                     activeTab === tab.key
-                      ? "bg-brand-500 text-white"
-                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                      ? "bg-brand-500 text-[var(--text-primary)]"
+                      : "text-slate-500 hover:dark:hover:text-[var(--text-primary)]"
                   }`}
                   onClick={() => handleTabChange(tab.key)}
                 >
@@ -209,7 +209,7 @@ const ConnectionsPage = () => {
               ))}
             </div>
 
-            <label className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3">
+            <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3">
               <Search className="h-4 w-4 text-slate-400" />
               <input
                 className="w-full bg-transparent text-sm outline-none"
@@ -232,14 +232,14 @@ const ConnectionsPage = () => {
                     }`}
                     onClick={() => handleSelectUser(entry.id)}
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-sm font-bold text-white">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-sm font-bold text-[var(--text-primary)]">
                       {entry.username.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold text-slate-900 dark:text-white">
+                      <p className="truncate font-semibold text-slate-900">
                         {entry.displayName}
                       </p>
-                      <p className="truncate text-sm text-slate-500 dark:text-slate-400">
+                      <p className="truncate text-sm text-slate-500">
                         {entry.email}
                       </p>
                       <p className="mt-1 text-xs text-slate-400">
@@ -262,14 +262,14 @@ const ConnectionsPage = () => {
           {selectedUser ? (
             <div className="grid h-full min-h-[620px] grid-rows-[auto_1fr_auto] gap-5">
               <div className="flex items-center gap-4 rounded-[1.75rem] bg-white/5 px-5 py-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-base font-bold text-white">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-base font-bold text-[var(--text-primary)]">
                   {selectedUser.username.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-lg font-semibold text-slate-900 dark:text-white">
+                  <p className="truncate text-lg font-semibold text-slate-900">
                     {selectedUser.displayName}
                   </p>
-                  <p className="truncate text-sm text-slate-500 dark:text-slate-400">
+                  <p className="truncate text-sm text-slate-500">
                     {selectedUser.email}
                   </p>
                 </div>
@@ -287,14 +287,14 @@ const ConnectionsPage = () => {
                           key={entry.id}
                           className={`max-w-[78%] rounded-[1.35rem] px-4 py-3 text-sm ${
                             mine
-                              ? "ml-auto bg-brand-500 text-white"
-                              : "bg-slate-200 text-slate-800 dark:bg-white/10 dark:text-slate-100"
+                              ? "ml-auto bg-brand-500 text-[var(--text-primary)]"
+                              : "bg-slate-200 text-slate-800 dark:bg-white/10"
                           }`}
                         >
                           <p>{entry.message}</p>
                           <p
                             className={`mt-2 text-[11px] ${
-                              mine ? "text-white/75" : "text-slate-500 dark:text-slate-400"
+                              mine ? "text-[var(--text-primary)]/75" : "text-slate-500"
                             }`}
                           >
                             {new Date(entry.createdAt).toLocaleString()}
@@ -326,7 +326,7 @@ const ConnectionsPage = () => {
                 </label>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-500 px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={sending || !message.trim()}
                 >
                   <Send className="h-4 w-4" />
@@ -350,3 +350,6 @@ const ConnectionsPage = () => {
 };
 
 export default ConnectionsPage;
+
+
+

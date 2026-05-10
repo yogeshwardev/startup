@@ -202,7 +202,7 @@ const UserCreatePage = () => {
         action={
           <Link
             to="/admin/users"
-            className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-900"
+            className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-primary)] dark:bg-white"
           >
             Back to users
           </Link>
@@ -215,7 +215,7 @@ const UserCreatePage = () => {
           action={
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
+              className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-[var(--text-primary)]"
               onClick={() =>
                 setNewUser((current) => ({
                   ...current,
@@ -230,7 +230,7 @@ const UserCreatePage = () => {
         >
           <form className="grid gap-4 md:grid-cols-2" onSubmit={handleCreateUser}>
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 College email
               </label>
               <input
@@ -243,7 +243,7 @@ const UserCreatePage = () => {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Registration number
               </label>
               <input
@@ -259,7 +259,7 @@ const UserCreatePage = () => {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Temporary password
               </label>
               <input
@@ -272,7 +272,7 @@ const UserCreatePage = () => {
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Department
               </label>
               <select
@@ -290,7 +290,7 @@ const UserCreatePage = () => {
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Year
               </label>
               <input
@@ -308,7 +308,7 @@ const UserCreatePage = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <label className="mb-2 block text-sm font-medium text-slate-700">
                 Role
               </label>
               <select
@@ -326,7 +326,7 @@ const UserCreatePage = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-70 dark:bg-white dark:text-slate-900 md:col-span-2"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-primary)] disabled:opacity-70 dark:bg-white md:col-span-2"
             >
               <UserPlus className="h-4 w-4" />
               {submitting ? "Creating..." : "Create user"}
@@ -341,14 +341,14 @@ const UserCreatePage = () => {
               <a
                 href="/samples/bulk-users-template.csv"
                 download
-                className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:text-slate-200"
+                className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10"
               >
                 <FileDown className="h-4 w-4" />
                 Sample CSV
               </a>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
+                className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-[var(--text-primary)]"
                 onClick={handleBulkCreate}
                 disabled={bulkSubmitting}
               >
@@ -359,7 +359,7 @@ const UserCreatePage = () => {
           }
         >
           <div className="space-y-4">
-            <label className="flex cursor-pointer items-center justify-center gap-3 rounded-[1.5rem] border border-dashed border-slate-300 px-4 py-6 text-sm font-medium text-slate-600 transition hover:border-brand-400 hover:text-brand-500 dark:border-white/10 dark:text-slate-300">
+            <label className="flex cursor-pointer items-center justify-center gap-3 rounded-[1.5rem] border border-dashed border-slate-300 px-4 py-6 text-sm font-medium text-slate-600 transition hover:border-brand-400 hover:text-brand-500 dark:border-white/10">
               <Upload className="h-4 w-4" />
               <span>
                 {bulkFileName ? `Loaded ${bulkFileName}` : "Upload CSV file"}
@@ -374,19 +374,19 @@ const UserCreatePage = () => {
 
             {bulkPreview.length ? (
               <div className="space-y-3">
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500">
                   {bulkPreview.length} users ready for upload.
                 </p>
                 <div className="space-y-2">
                   {bulkPreview.slice(0, 5).map((entry, index) => (
                     <div
                       key={`${entry.email}-${index}`}
-                      className="app-muted flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] px-4 py-3 text-sm"
+                      className="card-surface flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] px-4 py-3 text-sm"
                     >
-                      <span className="font-medium text-slate-900 dark:text-white">
+                      <span className="font-medium text-slate-900">
                         {entry.registrationNumber || "Missing registration number"}
                       </span>
-                      <span className="text-slate-500 dark:text-slate-400">
+                      <span className="text-slate-500">
                         {entry.email || "Missing email"} · {entry.department || "No dept"} ·{" "}
                         {entry.role || "No role"}
                       </span>
@@ -408,3 +408,6 @@ const UserCreatePage = () => {
 };
 
 export default UserCreatePage;
+
+
+

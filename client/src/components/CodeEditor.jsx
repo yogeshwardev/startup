@@ -7,9 +7,9 @@ const defaultTemplates = {
   java: "import java.util.*;\n\npublic class Main {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int n = sc.nextInt();\n    int[] nums = new int[n];\n    for (int i = 0; i < n; i++) nums[i] = sc.nextInt();\n    int target = sc.nextInt();\n    Map<Integer, Integer> seen = new HashMap<>();\n    for (int i = 0; i < n; i++) {\n      if (seen.containsKey(target - nums[i])) {\n        System.out.print(seen.get(target - nums[i]) + \" \" + i);\n        return;\n      }\n      seen.put(nums[i], i);\n    }\n  }\n}\n"
 };
 
-const CodeEditor = ({ language, value, onChange }) => (
+const CodeEditor = ({ language, value, onChange, options = {} }) => (
   <Editor
-    height="420px"
+    height="100%"
     theme="vs-dark"
     language={language === "cpp" ? "cpp" : language}
     value={value || defaultTemplates[language]}
@@ -20,6 +20,7 @@ const CodeEditor = ({ language, value, onChange }) => (
       wordWrap: "on",
       padding: { top: 16 },
       smoothScrolling: true,
+      ...options,
     }}
   />
 );

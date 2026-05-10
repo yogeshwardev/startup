@@ -282,14 +282,14 @@ const UserManagementPage = () => {
             {isAdmin ? (
               <Link
                 to="/admin/users/new"
-                className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white"
+                className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-[var(--text-primary)]"
               >
                 Create user
               </Link>
             ) : null}
             <button
               type="button"
-              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-white/10 dark:text-slate-200"
+              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-white/10"
               onClick={() => loadUsers(pagination.page)}
             >
               Refresh data
@@ -300,17 +300,17 @@ const UserManagementPage = () => {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <SectionCard title="Total visible users" className="p-5">
-          <p className="text-4xl font-bold text-slate-900 dark:text-white">
+          <p className="text-4xl font-bold text-slate-900">
             {pagination.total}
           </p>
         </SectionCard>
         <SectionCard title="Selected rows" className="p-5">
-          <p className="text-4xl font-bold text-slate-900 dark:text-white">
+          <p className="text-4xl font-bold text-slate-900">
             {selectedIds.length}
           </p>
         </SectionCard>
         <SectionCard title="Departments" className="p-5">
-          <p className="text-4xl font-bold text-slate-900 dark:text-white">
+          <p className="text-4xl font-bold text-slate-900">
             {departments.length}
           </p>
         </SectionCard>
@@ -318,7 +318,7 @@ const UserManagementPage = () => {
           title={isAdmin ? "Active students" : "Active visible students"}
           className="p-5"
         >
-          <p className="text-4xl font-bold text-slate-900 dark:text-white">
+          <p className="text-4xl font-bold text-slate-900">
             {analytics?.activeStudents ??
               users.filter((entry) => !entry.isBlocked).length}
           </p>
@@ -332,7 +332,7 @@ const UserManagementPage = () => {
             {isAdmin && selectedIds.length ? (
               <button
                 type="button"
-                className="rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-[var(--text-primary)]"
                 onClick={handleBulkDelete}
               >
                 Delete selected
@@ -340,7 +340,7 @@ const UserManagementPage = () => {
             ) : null}
             <button
               type="button"
-              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10 dark:text-slate-200"
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-white/10"
               onClick={() => loadUsers(pagination.page)}
             >
               Refresh
@@ -349,7 +349,7 @@ const UserManagementPage = () => {
         }
       >
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          <label className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3 xl:col-span-2">
+          <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3 xl:col-span-2">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               className="w-full bg-transparent text-sm outline-none"
@@ -435,14 +435,14 @@ const UserManagementPage = () => {
                     <th key={key} className="px-4 py-3">
                       <button
                         type="button"
-                        className="font-semibold text-slate-700 dark:text-slate-200"
+                        className="font-semibold text-slate-700"
                         onClick={() => onSort(key)}
                       >
                         {label}
                       </button>
                     </th>
                   ))}
-                  <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
+                  <th className="px-4 py-3 font-semibold text-slate-700">
                     Actions
                   </th>
                 </tr>
@@ -478,19 +478,19 @@ const UserManagementPage = () => {
                           }
                         />
                       </td>
-                      <td className="px-4 py-4 font-medium text-slate-900 dark:text-white">
+                      <td className="px-4 py-4 font-medium text-slate-900">
                         {entry.name}
                       </td>
-                      <td className="px-4 py-4 text-slate-500 dark:text-slate-400">
+                      <td className="px-4 py-4 text-slate-500">
                         {entry.email}
                       </td>
                       <td className="px-4 py-4">
                         <Badge variant={entry.role}>{entry.role}</Badge>
                       </td>
-                      <td className="px-4 py-4 text-slate-500 dark:text-slate-400">
+                      <td className="px-4 py-4 text-slate-500">
                         {entry.department}
                       </td>
-                      <td className="px-4 py-4 text-slate-500 dark:text-slate-400">
+                      <td className="px-4 py-4 text-slate-500">
                         {entry.year}
                       </td>
                       <td className="px-4 py-4">
@@ -529,7 +529,7 @@ const UserManagementPage = () => {
                               </button>
                               <button
                                 type="button"
-                                className="rounded-xl border border-red-300 p-2 text-red-500 dark:border-red-500/20"
+                                className="rounded-xl border border-red-300 p-2 text-red-500"
                                 onClick={() => setDeleteTarget(entry)}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -556,7 +556,7 @@ const UserManagementPage = () => {
         </div>
 
         <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-slate-500">
             Showing page {pagination.page} of {pagination.totalPages} •{" "}
             {pagination.total} total users
           </p>
@@ -586,11 +586,11 @@ const UserManagementPage = () => {
           {auditLogs.length ? (
             <div className="grid gap-4 lg:grid-cols-2">
               {auditLogs.map((entry) => (
-                <div key={entry._id} className="app-muted rounded-[1.75rem] p-5">
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                <div key={entry._id} className="card-surface rounded-[1.75rem] p-5">
+                  <p className="font-semibold text-slate-900">
                     {entry.message}
                   </p>
-                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="mt-2 text-sm text-slate-500">
                     {entry.actorId?.name || "System"} •{" "}
                     {new Date(entry.createdAt).toLocaleString()}
                   </p>
@@ -613,34 +613,34 @@ const UserManagementPage = () => {
       >
         {profileUser ? (
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="app-muted rounded-[1.75rem] p-5">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Name</p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
+            <div className="card-surface rounded-[1.75rem] p-5">
+              <p className="text-sm text-slate-500">Name</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">
                 {profileUser.name}
               </p>
             </div>
-            <div className="app-muted rounded-[1.75rem] p-5">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
+            <div className="card-surface rounded-[1.75rem] p-5">
+              <p className="text-sm text-slate-500">Email</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">
                 {profileUser.email}
               </p>
             </div>
-            <div className="app-muted rounded-[1.75rem] p-5">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+            <div className="card-surface rounded-[1.75rem] p-5">
+              <p className="text-sm text-slate-500">
                 Registration number
               </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
+              <p className="mt-2 text-lg font-semibold text-slate-900">
                 {profileUser.registrationNumber || "Not set"}
               </p>
             </div>
-            <div className="app-muted rounded-[1.75rem] p-5">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Role</p>
+            <div className="card-surface rounded-[1.75rem] p-5">
+              <p className="text-sm text-slate-500">Role</p>
               <div className="mt-2">
                 <Badge variant={profileUser.role}>{profileUser.role}</Badge>
               </div>
             </div>
-            <div className="app-muted rounded-[1.75rem] p-5">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Status</p>
+            <div className="card-surface rounded-[1.75rem] p-5">
+              <p className="text-sm text-slate-500">Status</p>
               <div className="mt-2">
                 <Badge variant={profileUser.isBlocked ? "blocked" : "active"}>
                   {profileUser.isBlocked ? "Blocked" : "Active"}
@@ -666,7 +666,7 @@ const UserManagementPage = () => {
             </button>
             <button
               type="button"
-              className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-900"
+              className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-primary)] dark:bg-white"
               onClick={handleUpdateUser}
               disabled={submitting}
             >
@@ -752,7 +752,7 @@ const UserManagementPage = () => {
                 }))
               }
             />
-            <label className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3 text-sm">
+            <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3 text-sm">
               <input
                 type="checkbox"
                 checked={!editingUser.isBlocked}
@@ -767,14 +767,14 @@ const UserManagementPage = () => {
             </label>
             {isAdmin ? (
               <div className="md:col-span-2">
-                <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className="mb-2 text-sm font-medium text-slate-700">
                   Permissions
                 </p>
                 <div className="grid gap-2 md:grid-cols-2">
                   {availablePermissions.map((permission) => (
                     <label
                       key={permission}
-                      className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3 text-sm"
+                      className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3 text-sm"
                     >
                       <input
                         type="checkbox"
@@ -815,7 +815,7 @@ const UserManagementPage = () => {
             </button>
             <button
               type="button"
-              className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-semibold text-white"
+              className="rounded-2xl bg-red-500 px-4 py-3 text-sm font-semibold text-[var(--text-primary)]"
               onClick={handleDeleteUser}
               disabled={submitting}
             >
@@ -824,8 +824,8 @@ const UserManagementPage = () => {
           </>
         }
       >
-        <div className="app-muted rounded-[1.75rem] p-5">
-          <p className="text-sm text-slate-700 dark:text-slate-300">
+        <div className="card-surface rounded-[1.75rem] p-5">
+          <p className="text-sm text-slate-700">
             This action will permanently remove{" "}
             <span className="font-semibold">{deleteTarget?.name}</span> and is
             tracked in the audit trail.
@@ -848,7 +848,7 @@ const UserManagementPage = () => {
             </button>
             <button
               type="button"
-              className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-slate-900"
+              className="rounded-2xl px-4 py-3 text-sm font-semibold text-[var(--text-primary)] dark:bg-white"
               onClick={handleResetPassword}
               disabled={submitting}
             >
@@ -858,11 +858,11 @@ const UserManagementPage = () => {
         }
       >
         <div className="space-y-4">
-          <div className="app-muted rounded-[1.75rem] p-5">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="card-surface rounded-[1.75rem] p-5">
+            <p className="text-sm text-slate-500">
               Target account
             </p>
-            <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
+            <p className="mt-2 text-lg font-semibold text-slate-900">
               {resetTarget?.name}
             </p>
           </div>
@@ -878,3 +878,6 @@ const UserManagementPage = () => {
 };
 
 export default UserManagementPage;
+
+
+

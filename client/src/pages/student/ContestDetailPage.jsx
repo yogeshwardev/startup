@@ -51,18 +51,18 @@ const ContestDetailPage = () => {
       />
 
       <section className="grid gap-4 md:grid-cols-3">
-        <div className="app-muted rounded-[1.5rem] p-5">
+        <div className="card-surface rounded-[1.5rem] p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-500">
             Status
           </p>
-          <p className="mt-3 text-xl font-semibold text-slate-900 dark:text-white">
+          <p className="mt-3 text-xl font-semibold text-slate-900">
             {timer.state === "countdown"
               ? "Upcoming"
               : timer.state === "live"
                 ? "Live now"
                 : "Ended"}
           </p>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-sm text-slate-500">
             {timer.state === "countdown"
               ? "Contest opens when the countdown reaches zero."
               : timer.state === "live"
@@ -71,26 +71,26 @@ const ContestDetailPage = () => {
           </p>
         </div>
 
-        <div className="app-muted rounded-[1.5rem] p-5">
+        <div className="card-surface rounded-[1.5rem] p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-500">
             Contest window
           </p>
-          <p className="mt-3 text-sm font-medium text-slate-900 dark:text-white">
+          <p className="mt-3 text-sm font-medium text-slate-900">
             {new Date(contest.startTime).toLocaleString()}
           </p>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500">
             to {new Date(contest.endTime).toLocaleString()}
           </p>
         </div>
 
-        <div className="app-muted rounded-[1.5rem] p-5">
+        <div className="card-surface rounded-[1.5rem] p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-500">
             Progress
           </p>
-          <p className="mt-3 text-xl font-semibold text-slate-900 dark:text-white">
+          <p className="mt-3 text-xl font-semibold text-slate-900">
             {problemCount} problems
           </p>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-sm text-slate-500">
             {solvedCount} accepted contest solves recorded so far.
           </p>
         </div>
@@ -106,13 +106,13 @@ const ContestDetailPage = () => {
                 return (
                   <div
                     key={problem?._id || `${index}-${item.order || 0}`}
-                    className="app-muted flex items-center justify-between rounded-[1.5rem] p-4"
+                    className="card-surface flex items-center justify-between rounded-[1.5rem] p-4"
                   >
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
+                      <p className="font-semibold text-slate-900">
                         {index + 1}. {problem?.title || "Problem unavailable"}
                       </p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-sm text-slate-500">
                         ID {problem?.problemCode || "------"} • {problem?.difficulty || "Unknown difficulty"}
                       </p>
                     </div>
@@ -132,7 +132,7 @@ const ContestDetailPage = () => {
                     ) : (
                       <Link
                         to={`/problems/${problem.slug}?contestId=${contest._id}`}
-                        className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-400"
+                        className="inline-flex items-center gap-2 rounded-2xl bg-brand-500 px-4 py-2 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-brand-400"
                       >
                         Solve
                         <ArrowRight className="h-4 w-4" />
@@ -149,7 +149,7 @@ const ContestDetailPage = () => {
             />
           )}
 
-          <div className="mt-5 rounded-[1.5rem] bg-slate-900/80 p-4 text-sm text-white">
+          <div className="mt-5 rounded-[1.5rem] bg-slate-900/80 p-4 text-sm text-[var(--text-primary)]">
             Solved problems tracked during contest: {solvedCount}
           </div>
           {timer.state === "ended" ? (
@@ -168,16 +168,16 @@ const ContestDetailPage = () => {
           {contest.leaderboard?.length ? (
             <div className="space-y-3">
               {contest.leaderboard.map((row, index) => (
-                <div key={`${row._id}-${index}`} className="app-muted flex items-center justify-between rounded-[1.5rem] p-4 text-sm">
+                <div key={`${row._id}-${index}`} className="card-surface flex items-center justify-between rounded-[1.5rem] p-4 text-sm">
                   <div>
-                    <p className="font-semibold text-slate-900 dark:text-white">
+                    <p className="font-semibold text-slate-900">
                       #{index + 1} {row.name}
                     </p>
-                    <p className="text-slate-500 dark:text-slate-400">{row.department}</p>
+                    <p className="text-slate-500">{row.department}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-slate-900 dark:text-white">{row.solved} solved</p>
-                    <p className="text-slate-500 dark:text-slate-400">Penalty {row.penaltyTime}</p>
+                    <p className="font-semibold text-slate-900">{row.solved} solved</p>
+                    <p className="text-slate-500">Penalty {row.penaltyTime}</p>
                   </div>
                 </div>
               ))}
@@ -192,3 +192,6 @@ const ContestDetailPage = () => {
 };
 
 export default ContestDetailPage;
+
+
+

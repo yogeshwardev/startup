@@ -3,6 +3,7 @@ import http from "../../api/http";
 import PageHeader from "../../components/PageHeader";
 import SectionCard from "../../components/SectionCard";
 import Skeleton from "../../components/Skeleton";
+import { Users, UserCheck, GraduationCap } from "lucide-react";
 import StatCard from "../../components/StatCard";
 
 const TeacherDashboard = () => {
@@ -27,7 +28,7 @@ const TeacherDashboard = () => {
     return (
       <div className="grid gap-4 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-32" />
+          <Skeleton key={index} className="h-28" />
         ))}
       </div>
     );
@@ -41,16 +42,17 @@ const TeacherDashboard = () => {
         description="A faculty-first workspace focused on visibility, performance monitoring, and coordinated preparation support."
       />
       <section className="grid gap-4 md:grid-cols-3">
-        <StatCard label="Students in scope" value={summary.totalStudents} />
-        <StatCard label="Active students" value={summary.activeStudents} />
-        <StatCard label="Years covered" value={summary.yearsCovered} />
+        <StatCard icon={Users} label="Students in scope" value={summary.totalStudents} />
+        <StatCard icon={UserCheck} label="Active students" value={summary.activeStudents} iconColor="text-emerald-400" iconBg="bg-emerald-500/10" />
+        <StatCard icon={GraduationCap} label="Years covered" value={summary.yearsCovered} iconColor="text-cyan-400" iconBg="bg-cyan-500/10" />
       </section>
       <SectionCard title="Recently visible students">
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-2">
           {summary.students.slice(0, 6).map((student) => (
-            <div key={student._id} className="app-muted rounded-[1.75rem] p-5">
-              <p className="font-semibold text-slate-900 dark:text-white">{student.name}</p>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <div key={student._id} className="rounded-lg p-4"
+              style={{ background: "var(--bg-input)", border: "1px solid var(--border-subtle)" }}>
+              <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{student.name}</p>
+              <p className="mt-1 text-xs" style={{ color: "var(--text-secondary)" }}>
                 {student.department} • Year {student.year}
               </p>
             </div>
@@ -62,3 +64,4 @@ const TeacherDashboard = () => {
 };
 
 export default TeacherDashboard;
+

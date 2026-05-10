@@ -27,9 +27,18 @@ export const evaluateSubmission = async ({ submissionId }) => {
   let stderr = "";
   let stdout = "";
 
+  let finalCode = submission.code;
+  if (problem.driverCode?.[submission.language]) {
+    const driver = problem.driverCode[submission.language];
+    const marker = submission.language === "python" ? "# __USER_CODE_HERE__" : "// __USER_CODE_HERE__";
+    if (driver.includes(marker)) {
+      finalCode = driver.replace(marker, finalCode);
+    }
+  }
+
   for (const testCase of tests) {
     const execution = await executeCode({
-      code: submission.code,
+      code: finalCode,
       language: submission.language,
       stdin: testCase.input,
       timeLimitMs: problem.timeLimitMs,

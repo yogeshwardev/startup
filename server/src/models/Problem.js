@@ -24,6 +24,8 @@ const starterCodeSchema = new mongoose.Schema(
     python: { type: String, default: "" },
     cpp: { type: String, default: "" },
     java: { type: String, default: "" },
+    javascript: { type: String, default: "" },
+    c: { type: String, default: "" },
   },
   { _id: false }
 );
@@ -34,7 +36,7 @@ const problemSchema = new mongoose.Schema(
       type: String,
       unique: true,
       sparse: true,
-      match: /^\d{6}$/,
+      match: /^CC\d{6}$/,
     },
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -52,10 +54,12 @@ const problemSchema = new mongoose.Schema(
     visibleTestCases: { type: [testCaseSchema], default: [] },
     hiddenTestCases: { type: [testCaseSchema], default: [] },
     starterCode: { type: starterCodeSchema, default: () => ({}) },
+    driverCode: { type: starterCodeSchema, default: () => ({}) },
+    hint: { type: String, default: "" },
     supportedLanguages: {
       type: [String],
-      enum: ["python", "cpp", "java"],
-      default: ["python", "cpp", "java"],
+      enum: ["python", "cpp", "java", "javascript", "c"],
+      default: ["python", "cpp", "java", "javascript", "c"],
     },
     timeLimitMs: { type: Number, default: 2000 },
     memoryLimitMb: { type: Number, default: 256 },
@@ -64,8 +68,11 @@ const problemSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    category: { type: String, default: "General" },
+    companyId: { type: String, default: "" },
     isDailyEligible: { type: Boolean, default: true },
     editorial: { type: String, default: "" },
+    skeletonConfig: { type: mongoose.Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );

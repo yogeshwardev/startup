@@ -44,8 +44,8 @@ const AdminDashboard = () => {
               {analytics.departmentPerformance.map((entry) => (
                 <div key={entry._id}>
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-900 dark:text-white">{entry._id}</span>
-                    <span className="text-slate-500 dark:text-slate-400">{entry.solved} solved</span>
+                    <span className="font-semibold text-slate-900">{entry._id}</span>
+                    <span className="text-slate-500">{entry.solved} solved</span>
                   </div>
                   <div className="h-3 rounded-full bg-slate-200 dark:bg-white/10">
                     <div className="h-3 rounded-full bg-gradient-to-r from-brand-500 to-accent" style={{ width: `${Math.min(100, entry.score)}%` }} />
@@ -62,9 +62,9 @@ const AdminDashboard = () => {
           {analytics.recentActivity.length ? (
             <div className="space-y-3">
               {analytics.recentActivity.map((entry) => (
-                <div key={entry._id} className="app-muted rounded-[1.5rem] p-4">
-                  <p className="font-medium text-slate-900 dark:text-white">{entry.message}</p>
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                <div key={entry._id} className="card-surface rounded-[1.5rem] p-4">
+                  <p className="font-medium text-slate-900">{entry.message}</p>
+                  <p className="mt-2 text-xs text-slate-500">
                     {entry.actorId?.name || "System"} • {new Date(entry.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -80,3 +80,6 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+
+

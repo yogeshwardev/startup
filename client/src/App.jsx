@@ -16,7 +16,6 @@ import ConnectionsPage from "./pages/shared/ConnectionsPage";
 import DepartmentsPage from "./pages/shared/DepartmentsPage";
 import SettingsPage from "./pages/shared/SettingsPage";
 import UserProfilePage from "./pages/shared/UserProfilePage";
-import CompanyListPage from "./pages/shared/CompanyListPage";
 import CompanyDetailPage from "./pages/shared/CompanyDetailPage";
 import ContestDetailPage from "./pages/student/ContestDetailPage";
 import ContestListPage from "./pages/student/ContestListPage";
@@ -26,6 +25,7 @@ import ProblemWorkspacePage from "./pages/student/ProblemWorkspacePage";
 import PlacementProblemWorkspacePage from "./pages/student/PlacementProblemWorkspacePage";
 import ProblemsPage from "./pages/student/ProblemsPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
+import SubmissionsPage from "./pages/student/SubmissionsPage";
 import ContactAdminPage from "./pages/teacher/ContactAdminPage";
 import TeacherProblemsPage from "./pages/teacher/TeacherProblemsPage";
 import TeacherMockTestPage from "./pages/teacher/TeacherMockTestPage";
@@ -57,6 +57,16 @@ const App = () => {
           <ProtectedRoute roles={["STUDENT"]}>
             <AppShell>
               <StudentDashboard />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/submissions"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <SubmissionsPage />
             </AppShell>
           </ProtectedRoute>
         }
@@ -363,16 +373,6 @@ const App = () => {
       />
       <Route
         path="/placement"
-        element={
-          <ProtectedRoute roles={["STUDENT"]}>
-            <AppShell>
-              <CompanyListPage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/placement/hub"
         element={
           <ProtectedRoute roles={["STUDENT"]}>
             <AppShell>

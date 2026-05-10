@@ -108,7 +108,7 @@ const TeacherProblemsPage = () => {
 
             <button
               type="submit"
-              className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white"
+              className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-[var(--text-primary)]"
             >
               Assign problem
             </button>
@@ -119,11 +119,11 @@ const TeacherProblemsPage = () => {
           {assignments.length ? (
             <div className="space-y-3">
               {assignments.map((assignment) => (
-                <div key={assignment._id} className="app-muted rounded-[1.5rem] p-4">
-                  <p className="font-semibold text-slate-900 dark:text-white">
+                <div key={assignment._id} className="card-surface rounded-[1.5rem] p-4">
+                  <p className="font-semibold text-slate-900">
                     {assignment.problemId?.title}
                   </p>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-sm text-slate-500">
                     ID {assignment.problemId?.problemCode} • {assignment.studentId?.name} •{" "}
                     {assignment.studentId?.department} • {assignment.status}
                   </p>
@@ -143,3 +143,6 @@ const TeacherProblemsPage = () => {
 };
 
 export default TeacherProblemsPage;
+
+
+

@@ -1,98 +1,62 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase } from "lucide-react";
-import PageHeader from "../../components/PageHeader";
+import { Building2, ChevronRight, Briefcase, Sparkles } from "lucide-react";
+import http from "../../api/http";
 import Skeleton from "../../components/Skeleton";
 
-// Sample companies data
-const COMPANIES = [
-  {
-    id: 1,
-    name: "TCS",
-    logo: "🏢",
-    hiringType: "Mass",
-    focusAreas: ["DSA", "Aptitude", "Core CS"],
-    questionsCount: 30,
-    mockTests: 5,
-  },
-  {
-    id: 2,
-    name: "Infosys",
-    logo: "💼",
-    hiringType: "Mass",
-    focusAreas: ["DSA", "Database", "Aptitude"],
-    questionsCount: 28,
-    mockTests: 4,
-  },
-  {
-    id: 3,
-    name: "Wipro",
-    logo: "🎯",
-    hiringType: "Mass",
-    focusAreas: ["DSA", "Core CS", "Aptitude"],
-    questionsCount: 25,
-    mockTests: 4,
-  },
-  {
-    id: 4,
-    name: "Accenture",
-    logo: "🚀",
-    hiringType: "Mass",
-    focusAreas: ["DSA", "Aptitude", "Reasoning"],
-    questionsCount: 22,
-    mockTests: 3,
-  },
-  {
-    id: 5,
-    name: "Amazon",
-    logo: "🛒",
-    hiringType: "Product",
-    focusAreas: ["DSA", "System Design", "Core CS"],
-    questionsCount: 35,
-    mockTests: 6,
-  },
-  {
-    id: 6,
-    name: "Microsoft",
-    logo: "💻",
-    hiringType: "Product",
-    focusAreas: ["DSA", "Algorithms", "Core CS"],
-    questionsCount: 32,
-    mockTests: 5,
-  },
-  {
-    id: 7,
-    name: "Google",
-    logo: "🔍",
-    hiringType: "Product",
-    focusAreas: ["DSA", "System Design", "Aptitude"],
-    questionsCount: 38,
-    mockTests: 7,
-  },
-];
-
-const CompanyCard = ({ company, onClick }) => {
+const CompanyCard = ({ company, completionPercent, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left p-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:shadow-md transition-all"
+      className="group relative w-full text-left p-6 card rounded-3xl  transition-all overflow-hidden flex flex-col min-h-[240px]"
     >
-      <div className="flex items-start gap-4">
-        <div className="text-4xl">{company.logo}</div>
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+      <Building2 className="absolute -right-6 top-1/2 -translate-y-1/2 w-48 h-48 text-brand-500 opacity-[0.02] pointer-events-none -rotate-12 group-hover:scale-110 transition-transform duration-700" />
+
+      <div className="flex items-start gap-4 mb-4 relative z-10">
+        <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm shrink-0 overflow-hidden">
+          {company.logo?.startsWith('http') ? (
+            <img src={company.logo} alt={company.name} className="w-9 h-9 object-contain" />
+          ) : (
+            <span className="text-2xl">{company.logo || "🏢"}</span>
+          )}
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-[var(--text-primary)] group-hover:text-brand-400 transition-colors">
             {company.name}
           </h3>
-          <div className="mt-2 flex flex-wrap gap-1">
-            {company.focusAreas.map((area) => (
-              <span key={area} className="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                {area}
-              </span>
-            ))}
+          <p className="text-xs text-[var(--text-secondary)] mt-1.5 line-clamp-2 pr-2 leading-relaxed">
+            {company.description || "Focused company-specific preparation patterns."}
+          </p>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-auto relative z-10 w-full">
+        <div className="w-full h-1.5 rounded-full bg-white/[0.04] overflow-hidden mb-4">
+          <div
+            className="h-full rounded-full transition-all duration-1000 ease-out"
+            style={{
+              width: `${completionPercent}%`,
+              background: "linear-gradient(90deg, #6366f1, #06b6d4)",
+            }}
+          />
+        </div>
+
+        <div className="flex items-end justify-between w-full">
+          <div className="flex gap-8">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1">Problem Bank</p>
+              <p className="text-[var(--text-primary)] font-bold text-sm">{company.totalQuestions || 0}+ Que.</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1">Completion</p>
+              <p className="text-accent font-bold text-sm">{completionPercent}%</p>
+            </div>
           </div>
-          <div className="mt-3 flex gap-4 text-sm text-slate-600 dark:text-slate-400">
-            <span>❔ {company.questionsCount} Q</span>
-            <span>📝 {company.mockTests} Tests</span>
+
+          <div className="w-10 h-10 rounded-full flex items-center justify-center group-hover:bg-brand-500 transition-all shrink-0"
+            style={{ background: "rgba(15, 20, 35, 0.8)", border: "1px solid rgba(100, 120, 200, 0.1)" }}>
+            <ChevronRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--text-primary)] transition-colors" />
           </div>
         </div>
       </div>
@@ -102,113 +66,99 @@ const CompanyCard = ({ company, onClick }) => {
 
 const PlacementHubPage = () => {
   const [companies, setCompanies] = useState([]);
+  const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setCompanies(COMPANIES);
-      setLoading(false);
-    }, 500);
+    const loadData = async () => {
+      try {
+        const [compRes, progRes] = await Promise.all([
+          http.get("/placement/companies"),
+          http.get("/placement/progress/me").catch(() => ({ data: { progress: { companyProgress: [] } } }))
+        ]);
+        setCompanies(compRes.data);
+        setProgress(progRes.data?.progress?.companyProgress || []);
+      } catch (error) {
+        console.error("Failed to load placement data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
-  const filteredCompanies = companies.filter((company) => {
-    if (selectedFilter === "all") return true;
-    return company.hiringType.toLowerCase() === selectedFilter.toLowerCase();
-  });
+  const getCompletionPercent = (company) => {
+    if (!company.totalQuestions) return 0;
+    const companyProg = progress?.find(p => p.companyName === company.name);
+    if (!companyProg) return 0;
+    const attemptCount = companyProg.totalQuestionsAttempted || 0;
+    return Math.min(100, Math.round((attemptCount / company.totalQuestions) * 100));
+  };
+
+  const handleBrowseCompanies = () => {
+    document.getElementById('companies-grid')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <PageHeader
-          eyebrow="Placement"
-          title="Preparation Hub"
-          description="Master company-specific interview preparation"
-        />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, idx) => (
-            <Skeleton key={idx} className="h-64" />
-          ))}
+      <div className="max-w-7xl mx-auto space-y-8">
+        <Skeleton className="h-[350px] w-full rounded-[2rem]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-[240px] rounded-3xl" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <PageHeader
-        eyebrow="Placement"
-        title="Preparation Hub"
-        description="Master company-specific interview preparation with focused practice"
-      />
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-[2rem] p-8 lg:p-12 animate-slide-up" style={{
+        background: "linear-gradient(135deg, rgba(34, 211, 238, 0.06) 0%, rgba(99, 102, 241, 0.04) 100%)",
+        border: "1px solid rgba(34, 211, 238, 0.1)",
+      }}>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/5 blur-[120px] rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+        <Briefcase className="absolute right-8 bottom-8 w-32 h-32 text-accent/[0.03] pointer-events-none" strokeWidth={0.8} />
 
-      {/* Quick Action - Mock Test CTA */}
-      <div className="bg-gradient-to-r from-brand-600 to-brand-700 dark:from-brand-500 dark:to-brand-600 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold mb-1">Ready to Practice?</h3>
-            <p className="text-sm opacity-90">Take a mock test and evaluate your placement readiness</p>
+        <div className="relative z-10 max-w-3xl">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-accent" />
+            <span className="text-[10px] font-bold text-accent tracking-[0.2em] uppercase">Placement Hub</span>
           </div>
-          <button
-            onClick={() => navigate("/placement/mock-test")}
-            className="px-6 py-3 bg-white text-brand-600 font-semibold rounded-lg hover:bg-slate-100 transition whitespace-nowrap"
-          >
-            Start Mock Test
-          </button>
-        </div>
-      </div>
-
-      {/* Filter Section */}
-      <div className="flex gap-3 flex-wrap">
-        {["all", "mass", "product"].map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setSelectedFilter(filter)}
-            className={`px-6 py-2.5 rounded-lg font-medium text-sm transition-all ${
-              selectedFilter === filter
-                ? "bg-brand-600 dark:bg-brand-500 text-white shadow-lg"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700"
-            }`}
-          >
-            {filter === "all" ? "All Companies" : `${filter.charAt(0).toUpperCase() + filter.slice(1)} Hiring`}
-          </button>
-        ))}
-      </div>
-
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="app-surface rounded-xl border p-5">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Companies</p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white">{filteredCompanies.length}</p>
-        </div>
-        <div className="app-surface rounded-xl border p-5">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total Questions</p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white">
-            {filteredCompanies.reduce((sum, c) => sum + c.questionsCount, 0)}
+          <h1 className="text-3xl lg:text-5xl font-display font-bold text-[var(--text-primary)] leading-tight mb-5">
+            Company-wise <span style={{ background: "linear-gradient(135deg, #06b6d4, #6366f1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Preparation</span>
+          </h1>
+          <p className="text-[var(--text-secondary)] leading-relaxed mb-8 max-w-2xl">
+            Prepare for placements with company-specific coding problems, aptitude questions, and interview rounds. Track your progress and compete with peers.
           </p>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleBrowseCompanies}
+              className="group px-6 py-3 bg-white text-[var(--bg-base)] font-bold rounded-xl hover:bg-slate-100 transition-all flex items-center gap-2 text-sm"
+            >
+              Browse Companies <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+            <button
+              onClick={() => navigate("/placement/leaderboard")}
+              className="px-6 py-3 font-bold rounded-xl transition-all flex items-center gap-2 text-sm text-[var(--text-primary)] hover:bg-white/[0.04]"
+              style={{ border: "1px solid rgba(100, 120, 200, 0.12)" }}
+            >
+              Placement Leaderboard
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => navigate("/placement/mock-test")}
-          className="app-surface rounded-xl border p-5 hover:shadow-lg transition-all hover:scale-105"
-        >
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Mock Tests Available</p>
-          <p className="text-3xl font-bold text-brand-600 dark:text-brand-400 mb-3">
-            {filteredCompanies.reduce((sum, c) => sum + c.mockTests, 0)}
-          </p>
-          <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">Click to start →</p>
-        </button>
       </div>
 
-      {/* Companies Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCompanies.map((company) => (
+      {/* Grid */}
+      <div id="companies-grid" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 stagger-children">
+        {companies.map((company) => (
           <CompanyCard
-            key={company.id}
+            key={company._id}
             company={company}
-            onClick={() => navigate(`/placement/company/${company.id}`)}
+            completionPercent={getCompletionPercent(company)}
+            onClick={() => navigate(`/placement/company/${company.name}`)}
           />
         ))}
       </div>
@@ -217,3 +167,6 @@ const PlacementHubPage = () => {
 };
 
 export default PlacementHubPage;
+
+
+

@@ -173,7 +173,7 @@ const StudentsPage = () => {
                   {departmentStudents.map((student) => (
                     <div key={student._id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                       <button type="button" className="w-full text-left" onClick={() => loadStudentDetails(student._id)}>
-                        <p className="font-semibold text-white">{student.name}</p>
+                        <p className="font-semibold text-[var(--text-primary)]">{student.name}</p>
                         <p className="text-sm text-slate-400">
                           {student.department} • Year {student.year}
                         </p>
@@ -193,7 +193,7 @@ const StudentsPage = () => {
                         </select>
                         <button
                           type="button"
-                          className="rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold text-white"
+                          className="rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold text-[var(--text-primary)]"
                           onClick={() => loadStudentDetails(student._id)}
                         >
                           View Details
@@ -214,7 +214,7 @@ const StudentsPage = () => {
           {selected ? (
             <div className="space-y-4">
               <div className="rounded-2xl bg-white/5 p-4">
-                <p className="text-lg font-semibold text-white">{selected.student.name}</p>
+                <p className="text-lg font-semibold text-[var(--text-primary)]">{selected.student.name}</p>
                 <p className="text-sm text-slate-400">
                   {selected.student.department} • Year {selected.student.year}
                 </p>
@@ -224,7 +224,7 @@ const StudentsPage = () => {
               </div>
               {selected.metrics.submissionHistory.map((submission) => (
                 <div key={submission._id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="font-semibold text-white">{submission.language.toUpperCase()}</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{submission.language.toUpperCase()}</p>
                   <p className="text-sm text-slate-300">Status: {submission.result.status}</p>
                 </div>
               ))}
@@ -239,3 +239,6 @@ const StudentsPage = () => {
 };
 
 export default StudentsPage;
+
+
+

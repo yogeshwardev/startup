@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { SUPPORTED_LANGUAGES } from "../constants/languages.js";
 
 const testResultSchema = new mongoose.Schema(
   {
@@ -38,7 +39,7 @@ const submissionSchema = new mongoose.Schema(
       default: null,
     },
     code: { type: String, required: true },
-    language: { type: String, enum: ["python", "cpp", "java"], required: true },
+    language: { type: String, enum: SUPPORTED_LANGUAGES, required: true },
     status: {
       type: String,
       enum: ["Queued", "Accepted", "Wrong Answer", "Time Limit Exceeded", "Runtime Error"],

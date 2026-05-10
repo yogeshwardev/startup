@@ -19,6 +19,11 @@ export const LANGUAGE_CONFIG = {
     fileName: "Main.java",
     executeCommand: "javac Main.java && java Main",
   },
+  javascript: {
+    extension: "js",
+    fileName: "main.js",
+    executeCommand: "node main.js",
+  },
 };
 
 export const SUPPORTED_LANGUAGES = Object.keys(LANGUAGE_CONFIG);

@@ -48,26 +48,48 @@ const buildStreak = (dates) => {
   };
 };
 
-const buildActivityCalendar = (dates) => {
+const buildActivityCalendar = (allSubmissions) => {
   const today = new Date();
-  const start = new Date(today);
-  start.setDate(today.getDate() - 364);
-  start.setHours(0, 0, 0, 0);
+  const year = today.getFullYear();
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31);
 
-  const countsByDay = dates.reduce((accumulator, value) => {
-    const key = value.toISOString().slice(0, 10);
-    accumulator.set(key, (accumulator.get(key) || 0) + 1);
-    return accumulator;
+  const statsByDay = allSubmissions.reduce((acc, sub) => {
+    // Offset timezone correctly to ensure local date string matches
+    const dateStr = new Date(sub.createdAt.getTime() - sub.createdAt.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    
+    if (!acc.has(dateStr)) {
+      acc.set(dateStr, { total: 0, accepted: 0 });
+    }
+    
+    const stats = acc.get(dateStr);
+    stats.total += 1;
+    if (sub.status === "Accepted") {
+      stats.accepted += 1;
+    }
+    
+    return acc;
   }, new Map());
 
   const days = [];
   const cursor = new Date(start);
 
-  while (cursor <= today) {
-    const key = cursor.toISOString().slice(0, 10);
+  // Pad the start so Jan 1 falls on the correct weekday (0 = Sunday, 1 = Monday, etc.)
+  const startWeekday = cursor.getDay();
+  for (let i = 0; i < startWeekday; i++) {
+    days.push({ empty: true, date: `empty-start-${i}` });
+  }
+
+  while (cursor <= end) {
+    const key = new Date(cursor.getTime() - cursor.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const stats = statsByDay.get(key) || { total: 0, accepted: 0 };
+    const accuracy = stats.total > 0 ? Math.round((stats.accepted / stats.total) * 100) : 0;
+    
     days.push({
       date: key,
-      count: countsByDay.get(key) || 0,
+      count: stats.accepted,
+      total: stats.total,
+      accuracy: accuracy,
       month: cursor.toLocaleString("en-US", { month: "short" }),
       weekday: cursor.getDay(),
     });
@@ -174,9 +196,7 @@ const buildProfilePayload = async (viewer, profileUser) => {
     },
     { easy: 0, medium: 0, hard: 0 }
   );
-  const activityCalendar = buildActivityCalendar(
-    acceptedSubmissions.map((entry) => new Date(entry.createdAt))
-  );
+  const activityCalendar = buildActivityCalendar(allSubmissions);
   const totalSolved = solvedProblems.length;
   const rankedUsers = await Submission.aggregate([
     { $match: { status: "Accepted", contestId: null } },

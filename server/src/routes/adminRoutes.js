@@ -131,6 +131,10 @@ router.patch(
 router.get("/analytics", protect, authorize("ADMIN", "TEACHER"), getAnalytics);
 router.get("/audit-logs", protect, authorize("ADMIN", "TEACHER"), getAuditLogs);
 
+// Problem Generation
+import { generateProblemAssets } from "../controllers/aiController.js";
+router.post("/generate-problem-assets", protect, authorize("ADMIN"), generateProblemAssets);
+
 // Mock Test Management routes
 router.get(
   "/mock-tests",

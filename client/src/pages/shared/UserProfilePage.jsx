@@ -21,10 +21,11 @@ const MAX_VISIBLE_SOLVED = 5;
 const MONTH_LABEL_INDEXES = [0, 35, 70, 105, 140, 175, 210, 245, 280, 315, 350];
 
 const heatClass = (count) => {
-  if (count >= 5) return "bg-emerald-400";
-  if (count >= 3) return "bg-emerald-500/75";
-  if (count >= 1) return "bg-emerald-500/35";
-  return "bg-slate-300/70 dark:bg-white/10";
+  if (count >= 4) return "bg-emerald-400";
+  if (count >= 3) return "bg-emerald-500";
+  if (count >= 2) return "bg-emerald-600";
+  if (count >= 1) return "bg-emerald-800";
+  return "bg-slate-800/50";
 };
 
 const difficultyColors = {
@@ -156,10 +157,10 @@ const UserProfilePage = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-500">
               Developer Profile
             </p>
-            <h1 className="mt-2 text-3xl font-semibold text-slate-900 dark:text-white">
+            <h1 className="mt-2 text-3xl font-semibold text-slate-900">
               {profile.user.displayName}
             </h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-sm text-slate-500">
               @{profile.user.username} · Rank #{profile.user.rank || "--"}
             </p>
             {profile.user.userCode && (
@@ -170,7 +171,7 @@ const UserProfilePage = () => {
           </div>
 
           <div className="relative">
-            <label className="app-muted flex items-center gap-3 rounded-2xl px-4 py-3">
+            <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3">
               <Search className="h-4 w-4 text-slate-400" />
               <input
                 className="w-full bg-transparent text-sm outline-none"
@@ -181,9 +182,9 @@ const UserProfilePage = () => {
             </label>
 
             {searchQuery.trim().length >= 2 ? (
-              <div className="app-surface absolute right-0 top-[calc(100%+0.5rem)] z-30 w-full rounded-[1.5rem] p-3 shadow-2xl">
+              <div className="card-surface absolute right-0 top-[calc(100%+0.5rem)] z-30 w-full rounded-[1.5rem] p-3 shadow-2xl">
                 {searching ? (
-                  <p className="px-2 py-3 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="px-2 py-3 text-sm text-slate-500">
                     Searching...
                   </p>
                 ) : searchResults.length ? (
@@ -198,17 +199,17 @@ const UserProfilePage = () => {
                           setSearchResults([]);
                         }}
                       >
-                        <p className="font-semibold text-slate-900 dark:text-white">
+                        <p className="font-semibold text-slate-900">
                           {entry.displayName}
                         </p>
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        <p className="mt-1 text-xs text-slate-500">
                           {entry.email} · {entry.registrationNumber || "No register number"}
                         </p>
                       </Link>
                     ))}
                   </div>
                 ) : (
-                  <p className="px-2 py-3 text-sm text-slate-500 dark:text-slate-400">
+                  <p className="px-2 py-3 text-sm text-slate-500">
                     No users found.
                   </p>
                 )}
@@ -222,28 +223,28 @@ const UserProfilePage = () => {
         <aside className="space-y-6">
           <SectionCard title="">
             <div className="space-y-5">
-              <div className="flex h-24 w-24 items-center justify-center rounded-[1.8rem] bg-gradient-to-br from-brand-500 to-blue-600 text-2xl font-bold text-white">
+              <div className="flex h-24 w-24 items-center justify-center rounded-[1.8rem] bg-gradient-to-br from-brand-500 to-blue-600 text-2xl font-bold text-[var(--text-primary)]">
                 {profile.user.username.slice(0, 2).toUpperCase()}
               </div>
 
               <div>
-                <p className="text-2xl font-semibold text-slate-900 dark:text-white">
+                <p className="text-2xl font-semibold text-slate-900">
                   {profile.user.displayName}
                 </p>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                <p className="mt-1 text-sm text-slate-500">
                   {profile.user.email}
                 </p>
-                <div className="mt-4 flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                <div className="mt-4 flex items-center gap-3 text-sm text-slate-500">
                   <Link
                     to={`${networkBasePath}?tab=following`}
-                    className="rounded-full px-2 py-1 transition hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                    className="rounded-full px-2 py-1 transition hover:bg-white/5 hover:dark:hover:text-[var(--text-primary)]"
                   >
                     {profile.user.followingCount} Following
                   </Link>
                   <span>|</span>
                   <Link
                     to={`${networkBasePath}?tab=followers`}
-                    className="rounded-full px-2 py-1 transition hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                    className="rounded-full px-2 py-1 transition hover:bg-white/5 hover:dark:hover:text-[var(--text-primary)]"
                   >
                     {profile.user.followersCount} Followers
                   </Link>
@@ -256,7 +257,7 @@ const UserProfilePage = () => {
                   className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
                     profile.user.isFollowing
                       ? "border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10"
-                      : "bg-emerald-500 text-white hover:bg-emerald-600"
+                      : "bg-emerald-500 text-[var(--text-primary)] hover:bg-emerald-600"
                   }`}
                   onClick={handleFollowToggle}
                   disabled={followBusy}
@@ -276,10 +277,10 @@ const UserProfilePage = () => {
                   <div key={key} className="flex items-start gap-3">
                     <Icon className="mt-1 h-4 w-4 text-brand-400" />
                     <div>
-                      <p className="font-semibold capitalize text-slate-900 dark:text-white">
+                      <p className="font-semibold capitalize text-slate-900">
                         {key} {value}
                       </p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                      <p className="text-sm text-slate-500">
                         Last week {Math.floor(Number(value || 0) / 7)}
                       </p>
                     </div>
@@ -300,7 +301,7 @@ const UserProfilePage = () => {
                     <span className="rounded-full bg-slate-700/80 px-3 py-1 text-slate-100">
                       {entry.language.toUpperCase()}
                     </span>
-                    <span className="text-slate-500 dark:text-slate-400">
+                    <span className="text-slate-500">
                       {entry.solved} solved
                     </span>
                   </div>
@@ -324,10 +325,10 @@ const UserProfilePage = () => {
                     <div className="absolute inset-3 rounded-full border-[8px] border-cyan-500/25" />
                     <div className="absolute inset-7 rounded-full border-[8px] border-rose-500/25" />
                     <div className="text-center">
-                      <p className="text-5xl font-bold text-slate-900 dark:text-white">
+                      <p className="text-5xl font-bold text-slate-900">
                         {profile.stats.solvedCount}
                       </p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-sm text-slate-500">
                         Total solved
                       </p>
                     </div>
@@ -351,7 +352,7 @@ const UserProfilePage = () => {
                         >
                           {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
                         </p>
-                        <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+                        <p className="mt-2 text-2xl font-bold text-slate-900">
                           {count}
                         </p>
                       </div>
@@ -370,14 +371,14 @@ const UserProfilePage = () => {
                       className="rounded-[1.5rem] bg-emerald-500/10 p-4"
                     >
                       <p className="font-semibold text-emerald-300">{badge.label}</p>
-                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-sm text-slate-500">
                         Earned badge
                       </p>
                     </div>
                   ))
                 ) : (
                   <div className="rounded-[1.5rem] bg-white/5 p-4">
-                    <p className="font-semibold text-slate-900 dark:text-white">
+                    <p className="font-semibold text-slate-900">
                       No earned badges yet
                     </p>
                   </div>
@@ -387,10 +388,10 @@ const UserProfilePage = () => {
                     key={badge.key}
                     className="rounded-[1.5rem] border border-dashed border-white/10 p-4"
                   >
-                    <p className="font-semibold text-slate-600 dark:text-slate-300">
+                    <p className="font-semibold text-slate-600">
                       {badge.label}
                     </p>
-                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    <p className="mt-1 text-sm text-slate-500">
                       Locked badge
                     </p>
                   </div>
@@ -401,7 +402,7 @@ const UserProfilePage = () => {
 
           <SectionCard title="Submission Heatmap">
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
                 <p>{profile.stats.solvedCount} accepted submissions in the past year</p>
                 <div className="flex gap-5">
                   <span>Total active days: {profile.stats.streak.activeDays}</span>
@@ -411,21 +412,26 @@ const UserProfilePage = () => {
 
               <div className="overflow-x-auto">
                 <div className="min-w-[720px]">
-                  <div className="mb-2 grid grid-cols-[repeat(53,minmax(0,1fr))] gap-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    {MONTH_LABEL_INDEXES.map((index) => (
-                      <span key={index} className="col-span-4">
-                        {activityCalendar[index]?.month}
+                  <div className="mb-2 grid grid-cols-[repeat(53,minmax(0,1fr))] gap-1 text-[11px] text-slate-500">
+                    {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((month, i) => (
+                      <span key={month} className={i === 0 ? "col-span-5" : "col-span-4"}>
+                        {month}
                       </span>
                     ))}
                   </div>
                   <div className="grid grid-flow-col grid-rows-7 gap-1">
-                    {activityCalendar.map((day) => (
-                      <div
-                        key={day.date}
-                        title={`${day.date}: ${day.count} submissions`}
-                        className={`h-3.5 w-3.5 rounded-[4px] ${heatClass(day.count)}`}
-                      />
-                    ))}
+                    {activityCalendar.map((day) => {
+                      if (day.empty) {
+                        return <div key={day.date} className="h-3.5 w-3.5" />;
+                      }
+                      return (
+                        <div
+                          key={day.date}
+                          title={`Date: ${day.date}\nTotal Submissions: ${day.total || 0}\nAccuracy: ${day.accuracy || 0}%`}
+                          className={`h-3.5 w-3.5 rounded-[3px] cursor-pointer ${heatClass(day.count)}`}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -435,10 +441,10 @@ const UserProfilePage = () => {
           <SectionCard title="Recent Activity">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="text-2xl font-bold text-slate-900">
                   {profile.stats.solvedCount}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-slate-500">
                   Unique questions solved
                 </p>
               </div>
@@ -458,14 +464,14 @@ const UserProfilePage = () => {
                 {visibleSolved.map((problem) => (
                   <div
                     key={problem.problemId}
-                    className="app-muted flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] p-4"
+                    className="card-surface flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] p-4"
                   >
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">
+                      <p className="font-semibold text-slate-900">
                         {problem.title}
                       </p>
                       <div className="mt-2 flex items-center gap-2">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                        <span className="text-xs text-slate-500">
                           ID {problem.problemCode}
                         </span>
                         <span
@@ -478,7 +484,7 @@ const UserProfilePage = () => {
                         </span>
                       </div>
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-slate-500">
                       {new Date(problem.solvedAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -520,3 +526,6 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
+
+
+

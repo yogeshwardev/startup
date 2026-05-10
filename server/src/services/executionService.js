@@ -50,7 +50,7 @@ export const executeCode = async ({ code, language, stdin = "", timeLimitMs = en
     const command = `${languageConfig.executeCommand} < stdin.txt`;
     const startedAt = Date.now();
     const { stdout, stderr } = await execFileAsync("docker", buildDockerArgs(workspacePath, command, memoryLimitMb), {
-      timeout: timeLimitMs,
+      timeout: timeLimitMs + 10000, // Add 10s overhead for compilation (g++, javac)
       windowsHide: true,
     });
 

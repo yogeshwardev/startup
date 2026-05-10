@@ -1,0 +1,792 @@
+CampusArena Admin and Teacher Pages - Detailed Feature List
+
+This document describes the currently implemented teacher-side and admin-side pages in the project, based on the frontend routes and the connected backend APIs.
+
+==================================================
+1. TEACHER PAGES
+==================================================
+
+Teacher access is available for users with role TEACHER.
+Some teacher routes also allow ADMIN access for oversight/testing, but they are part of the teacher workflow.
+
+----------------------------------------
+1.1 Teacher Dashboard
+Route: /teacher
+Component: client/src/pages/teacher/TeacherDashboard.jsx
+----------------------------------------
+
+Main purpose:
+- Gives teachers a quick overview of student readiness and visibility.
+
+Implemented features:
+- Loads student data through the user listing API with role=STUDENT.
+- Shows summary cards for:
+  - Students in scope
+  - Active students
+  - Years covered
+- Defines active students as students whose accounts are not blocked.
+- Displays a "Recently visible students" section.
+- Shows up to 6 student cards with:
+  - Student name
+  - Department
+  - Year
+- Uses loading skeletons before data is available.
+
+Behavior notes:
+- Teacher visibility is department-scoped by backend rules when the logged-in user is a teacher.
+- The dashboard is read-focused and does not provide editing directly.
+
+----------------------------------------
+1.2 Teacher User Management / Student Roster
+Route: /teacher/users
+Component: client/src/pages/admin/UserManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Lets teachers review students in their scope and make limited profile/status changes.
+
+Implemented features:
+- Reuses the same user management page as admin, but in teacher mode.
+- Loads visible users from /users.
+- Backend restricts teacher results to:
+  - role = STUDENT
+  - same department as the teacher
+- Shows summary cards for:
+  - Total visible users
+  - Selected rows
+  - Departments
+  - Active visible students
+- Provides user table with:
+  - Checkbox selection
+  - Name
+  - Email
+  - Role badge
+  - Department
+  - Year
+  - Status badge
+  - Action buttons
+- Supports filtering by:
+  - Search text
+  - Role
+  - Department
+  - Year
+- Supports sorting by:
+  - Name
+  - Email
+  - Role
+  - Department
+  - Year
+  - Status
+- Supports pagination with previous and next controls.
+- Allows row selection for quick review.
+- Allows refresh of the data table.
+- Provides action buttons per row:
+  - View profile
+  - Edit user
+  - Toggle active/blocked status
+
+Teacher limitations:
+- Teachers cannot create users.
+- Teachers cannot delete users.
+- Teachers cannot bulk delete users.
+- Teachers cannot reset passwords.
+- Teachers cannot edit admin or teacher accounts.
+- Teachers can only edit students from their own department.
+- Teachers cannot change permissions.
+- Teachers cannot change a student role because role edits are admin-only in backend logic.
+
+Editable teacher-side fields in the modal:
+- Name
+- Email
+- Registration number
+- Department
+- Year
+- Active/blocked state
+
+Important backend rule:
+- Teacher updates are allowed only for student accounts in the teacher's department.
+
+----------------------------------------
+1.3 Teacher Departments Page
+Route: /teacher/departments
+Component: client/src/pages/shared/DepartmentsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Lets teachers view the academic department structure used for grouping and coordination.
+
+Implemented features:
+- Loads department list from /departments.
+- Shows a department directory grid.
+- Displays each department as a card.
+- Teacher-specific helper text explains these departments are visible for:
+  - Class coordination
+  - Student filtering
+- Uses loading skeletons.
+- Shows empty state if no departments exist.
+
+What this page does not do:
+- This shared page is view-only.
+- Department creation for teachers is not exposed here, even though a backend endpoint exists.
+
+----------------------------------------
+1.4 Teacher Problem Assignment Page
+Route: /teacher/problems
+Component: client/src/pages/teacher/TeacherProblemsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Allows teachers to assign practice problems to students.
+
+Implemented features:
+- Loads three data sets in parallel:
+  - All coding problems from /problems
+  - Visible students from /students
+  - Existing teacher assignments from /teacher/assignments
+- Provides an assignment form with:
+  - Student selector
+  - Problem selector
+  - Optional due date/time
+- Problem selector shows:
+  - Problem title
+  - 6-digit problem ID
+  - Difficulty
+- Automatically preselects the first available student and first available problem after load.
+- Submits assignments through POST /teacher/assignments.
+- Shows toast feedback for success and failure.
+- Refreshes assignment list after creating a new assignment.
+- Displays existing assignments with:
+  - Problem title
+  - Problem ID
+  - Student name
+  - Student department
+  - Assignment status
+- Shows empty state if no assignments exist.
+
+Practical use:
+- Helpful for directed practice and deadline-based preparation.
+
+----------------------------------------
+1.5 Teacher Mock Test Management
+Route: /teacher/mock-tests
+Component: client/src/pages/teacher/TeacherMockTestPage.jsx
+----------------------------------------
+
+Main purpose:
+- Lets teachers create and manage mock tests for students.
+
+Implemented features:
+- Loads all coding problems from /problems.
+- Loads existing mock tests from /admin/mock-tests.
+- Mock test creation form includes:
+  - Mock test title
+  - Duration in minutes
+  - Optional company/topic label
+- Problem selection features:
+  - Search problems by title
+  - Search by problem ID
+  - Search by difficulty
+  - Checkbox-based problem selection
+  - Add problems by comma-separated problem IDs
+- Prevents creation if no problem is selected.
+- Creates mock tests through POST /admin/mock-tests.
+- Shows selected problem preview list with:
+  - Order number
+  - Problem title
+  - Problem ID
+  - Difficulty
+- Displays created mock tests with:
+  - Title
+  - Duration
+  - Number of problems
+  - Optional company/topic tag
+- Allows deletion of mock tests.
+- Deletes via DELETE /admin/mock-tests/:id.
+- Shows loading, saving, and deleting states.
+- Shows empty states for:
+  - No selected problems
+  - No mock tests
+
+Notes:
+- Teachers are allowed by backend authorization to manage mock tests.
+- This page is one of the teacher portal's strongest creation tools.
+
+----------------------------------------
+1.6 Teacher Analytics
+Route: /teacher/analytics
+Component: client/src/pages/shared/AnalyticsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Gives teachers a lightweight analytics snapshot for students they can see.
+
+Implemented features:
+- Loads visible students through /users with role=STUDENT.
+- Builds teacher-specific metrics from returned data.
+- Shows cards for:
+  - Visible students
+  - Active students
+  - Departments in scope
+- Uses loading skeletons while fetching.
+
+Teacher analytics scope:
+- Simpler than admin analytics.
+- No audit trail.
+- No department solved-score chart.
+- Focuses on visibility and student coverage rather than platform-wide operations.
+
+----------------------------------------
+1.7 Teacher Settings
+Route: /teacher/settings
+Component: client/src/pages/shared/SettingsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Provides workspace-level preferences and account context.
+
+Implemented features:
+- Shows current theme status:
+  - Dark mode or Light mode
+- Allows theme toggle.
+- Displays account context cards for:
+  - Name
+  - Role
+  - Department
+  - Year
+
+This page is informational plus a theme preference control.
+
+----------------------------------------
+1.8 Contact Admin
+Route: /teacher/contact-admin
+Component: client/src/pages/teacher/ContactAdminPage.jsx
+----------------------------------------
+
+Main purpose:
+- Lets teachers communicate directly with administrators.
+
+Implemented features:
+- Provides a free-text message box.
+- Sends the message through POST /contact-admin.
+- Clears the form after successful submission.
+- Shows success status text after sending.
+- Placeholder examples suggest uses such as:
+  - Reporting suspicious activity
+  - Requesting new problems
+  - Raising concerns
+
+Backend behavior:
+- Messages are stored with:
+  - senderId
+  - message content
+  - sender role
+
+==================================================
+2. ADMIN PAGES
+==================================================
+
+Admin access is available only for users with role ADMIN at the frontend route level.
+
+----------------------------------------
+2.1 Admin Dashboard
+Route: /admin
+Component: client/src/pages/admin/AdminDashboard.jsx
+----------------------------------------
+
+Main purpose:
+- Gives admins a campus-wide operations overview.
+
+Implemented features:
+- Loads analytics from /analytics.
+- Displays top summary cards for:
+  - Total users
+  - Active users
+  - Active students
+  - Problem inventory
+- Active users means users with submission activity in the last 7 days.
+- Shows department distribution chart using solved score data.
+- Shows solved count per department.
+- Shows recent audit trail with:
+  - Event message
+  - Actor name or "System"
+  - Timestamp
+- Uses loading skeletons before analytics loads.
+- Shows empty states if analytics or audit activity is not available.
+
+----------------------------------------
+2.2 Admin User Management
+Route: /admin/users
+Component: client/src/pages/admin/UserManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Central user operations panel for reviewing, editing, deleting, blocking, and auditing users.
+
+Implemented features:
+- Loads users with pagination.
+- Loads departments.
+- Loads analytics summary.
+- Loads recent audit logs.
+- Displays summary cards for:
+  - Total visible users
+  - Selected rows
+  - Departments
+  - Active students
+- Supports advanced filtering:
+  - Search by name, email, department
+  - Role filter
+  - Department filter
+  - Year filter
+- Supports sorting by:
+  - Name
+  - Email
+  - Role
+  - Department
+  - Year
+  - Status
+- Supports page navigation.
+- Displays user table with:
+  - Select all checkbox
+  - Per-row checkboxes
+  - Name
+  - Email
+  - Role badge
+  - Department
+  - Year
+  - Status badge
+  - Actions
+- Per-user actions:
+  - View profile
+  - Edit user
+  - Reset password
+  - Delete user
+- Allows active/block toggle directly from status badge.
+- Supports bulk delete for selected users.
+- Shows recent activity logs section.
+
+Admin edit modal features:
+- Edit name
+- Edit email
+- Edit registration number
+- Edit role
+- Edit department
+- Edit year
+- Keep account active checkbox
+- Manage permissions
+
+Permissions available in UI:
+- manage-users
+- assign-problems
+- view-analytics
+- reset-passwords
+
+Password reset features:
+- Opens dedicated reset modal.
+- Pre-fills a generated strong password.
+- Allows manual replacement before submit.
+- Enforces password strength pattern on client side.
+
+Deletion features:
+- Single delete with confirmation modal.
+- Bulk delete for multiple selected users.
+- Deletions are intended to be tracked in audit logs.
+
+----------------------------------------
+2.3 Admin Create User Page
+Route: /admin/users/new
+Component: client/src/pages/admin/UserCreatePage.jsx
+----------------------------------------
+
+Main purpose:
+- Create one user manually or many users in bulk.
+
+Implemented features:
+- Loads departments for selection.
+- Manual user creation form includes:
+  - College email
+  - Registration number
+  - Temporary password
+  - Department
+  - Year
+  - Role
+- Can auto-generate a strong password.
+- Validates academic email pattern.
+- Validates registration number presence.
+- Validates strong password rules.
+- Submits manual creation through POST /users.
+- Redirects back to /admin/users after success.
+
+Bulk creation features:
+- Accepts CSV upload.
+- Also supports pasted CSV text through internal state flow.
+- Provides downloadable sample CSV file:
+  - /samples/bulk-users-template.csv
+- Parses rows in this format:
+  - email, registrationNumber, password, department, year, role
+- Validates each row before upload.
+- Shows preview of first few parsed rows.
+- Submits bulk creation through POST /users/bulk.
+- Displays created user count on success.
+
+Backend validation notes:
+- Department must already exist.
+- Duplicate emails are rejected.
+- Duplicate registration numbers are rejected.
+- Only admins can create or bulk-create users.
+
+----------------------------------------
+2.4 Admin Problem Management
+Route: /admin/problems
+Component: client/src/pages/admin/ProblemManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Create coding problems and basic contest entries.
+
+Implemented features:
+- Problem creation form includes:
+  - Title
+  - Slug
+  - Difficulty
+  - Time limit in milliseconds
+  - Memory limit in MB
+  - Tags
+  - Description
+  - Input format
+  - Output format
+  - Visible testcase input
+  - Visible testcase output
+  - Hidden testcase input
+  - Hidden testcase output
+  - Constraints
+  - Python starter code
+  - C++ starter code
+  - Java starter code
+- Converts form data into structured problem payload.
+- Sends creation request to POST /admin/problems.
+- Shows returned 6-digit problem code after success.
+- Resets form after successful creation.
+
+Contest creation features inside this page:
+- Provides a quick contest form with:
+  - Contest title
+  - Start time
+  - End time
+  - Comma-separated problem IDs
+- Converts entered problem IDs into contest order entries.
+- Sends contest creation request to POST /contests.
+- Reloads existing contests after creation.
+
+Existing contests section:
+- Lists created contests.
+- Shows contest title.
+- Shows number of problems in each contest.
+
+Navigation feature:
+- Includes shortcut button to the existing problems page.
+
+----------------------------------------
+2.5 Existing Problems Page
+Route: /admin/problems/existing
+Component: client/src/pages/admin/ExistingProblemsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Review and maintain the entire problem bank.
+
+Implemented features:
+- Loads all problems from /problems.
+- Supports keyword search across:
+  - Title
+  - Slug
+  - Difficulty
+  - Tags
+- Supports direct problem ID search.
+- Displays each problem with:
+  - Title
+  - 6-digit problem ID
+  - Slug
+  - Difficulty
+  - Tags
+- Allows deletion of a problem.
+- Deletes via DELETE /admin/problems/:id.
+- Provides refresh button.
+- Provides navigation back to creation page.
+- Uses loading skeletons and empty states.
+
+----------------------------------------
+2.6 Contest Management
+Route: /admin/contests
+Component: client/src/pages/admin/ContestManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Dedicated contest builder with explicit problem selection.
+
+Implemented features:
+- Loads all problems and existing contests.
+- Contest creation form includes:
+  - Contest title
+  - Start time
+  - End time
+  - Problem selector
+- Problem selection methods:
+  - Manual checkbox selection
+  - Add by comma-separated problem IDs
+- Shows selected problem preview with order.
+- Sends contest creation to POST /contests.
+- Requires at least one selected problem.
+- Displays created contests with:
+  - Title
+  - Start and end timestamps
+  - Number of problems
+- Shows empty states for missing selections or no contests.
+
+----------------------------------------
+2.7 Admin Mock Test Management
+Route: /admin/mock-tests
+Component: client/src/pages/admin/MockTestManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Create and manage platform mock tests.
+
+Implemented features:
+- Loads all coding problems.
+- Loads all mock tests.
+- Create form fields:
+  - Title
+  - Duration in minutes
+  - Optional company
+- Problem picker features:
+  - Search by title
+  - Search by problem ID
+  - Search by difficulty
+  - Checkbox selection
+  - Add by comma-separated problem IDs
+- Shows selected problem preview list.
+- Creates mock test with POST /admin/mock-tests.
+- Lists existing mock tests with:
+  - Title
+  - Duration
+  - Problem count
+  - Company label if available
+- Allows deletion of mock tests.
+- Deletes through DELETE /admin/mock-tests/:id.
+- Uses saving and deleting states.
+- Shows empty states.
+
+Note:
+- The file imports an edit icon, but no edit workflow is currently exposed in the page UI.
+
+----------------------------------------
+2.8 Admin Departments Page
+Route: /admin/departments
+Component: client/src/pages/shared/DepartmentsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Gives admins a structured view of campus departments.
+
+Implemented features:
+- Loads department directory from /departments.
+- Displays departments as cards in a grid.
+- Admin-specific helper text says departments are ready for:
+  - User provisioning
+  - Leaderboard segmentation
+- Uses loading skeletons and empty state.
+
+What this page does not do:
+- It does not expose department creation UI, even though department creation exists elsewhere in backend/teacher module logic.
+
+----------------------------------------
+2.9 Admin Analytics
+Route: /admin/analytics
+Component: client/src/pages/shared/AnalyticsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Provides an analytics-focused operational view.
+
+Implemented features:
+- Loads analytics from /analytics.
+- Shows top stats:
+  - Total users
+  - Active students
+  - Problems tracked
+- Shows department distribution section.
+- For each department, displays:
+  - Department name
+  - Solved count
+  - Progress bar based on score
+- Shows empty state if no department analytics exist.
+- Uses loading skeletons during fetch.
+
+Difference from dashboard:
+- The dashboard includes more operational framing and recent audit trail.
+- This page is more focused on metrics display.
+
+----------------------------------------
+2.10 Admin Settings
+Route: /admin/settings
+Component: client/src/pages/shared/SettingsPage.jsx
+----------------------------------------
+
+Main purpose:
+- Workspace appearance and account-context page for admins.
+
+Implemented features:
+- Shows current theme.
+- Allows theme toggle.
+- Displays:
+  - Name
+  - Role
+  - Department
+  - Year
+
+----------------------------------------
+2.11 Placement Company Management
+Route: /admin/placement/companies
+Component: client/src/pages/admin/CompanyManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Manage companies used in the placement preparation module.
+
+Implemented features:
+- Loads company list from /placement/companies.
+- Displays each company with:
+  - Name
+  - Type
+  - Number of focus areas
+- Supports adding a new company.
+- Supports editing an existing company.
+- Supports deleting a company.
+- Creation/edit modal fields:
+  - Company name
+  - Type
+  - Focus areas (comma separated)
+  - Description
+  - Website
+- Create action sends POST /placement/admin/companies.
+- Edit action sends PATCH /placement/admin/companies/:name.
+- Delete action sends DELETE /placement/admin/companies/:name.
+- Uses a modal workflow and loading skeletons.
+
+Type options currently available:
+- Mass Hiring
+- Product Based
+
+----------------------------------------
+2.12 Placement Question Management
+Route: /admin/placement/questions
+Component: client/src/pages/admin/QuestionManagementPage.jsx
+----------------------------------------
+
+Main purpose:
+- Manage placement-preparation question banks for companies.
+
+Implemented features:
+- Loads company list first.
+- Automatically selects the first company if available.
+- Loads questions for the selected company from:
+  - /placement/admin/companies/:name/questions
+- Displays question cards with:
+  - Title
+  - Type
+  - Difficulty
+  - Topic
+- Supports adding a question.
+- Supports editing a question.
+- Supports deleting a question.
+- Add/edit modal fields:
+  - Type
+  - Difficulty
+  - Category
+  - Topic
+  - Title
+  - Description
+  - Tags
+- Converts constraints textarea into an array before submit.
+- Converts tags into an array before submit.
+- Create action sends POST /placement/admin/questions.
+- Edit action sends PATCH /placement/admin/questions/:id.
+- Delete action sends DELETE /placement/admin/questions/:id.
+- Supports company switching through a select input.
+- Uses loading skeletons.
+
+Question type options:
+- coding
+- aptitude
+- interview
+
+Difficulty options:
+- easy
+- medium
+- hard
+
+==================================================
+3. SHARED ROLE-BASED BEHAVIOR
+==================================================
+
+These behaviors are important across both teacher and admin areas.
+
+Authentication and access:
+- /teacher/* routes are protected for TEACHER and ADMIN.
+- /admin/* routes are protected for ADMIN only in the frontend router.
+- Most management APIs are protected with backend authorization.
+
+Navigation:
+- Teacher navigation includes:
+  - Dashboard
+  - Profile
+  - Users
+  - Progress
+  - Departments
+  - Problems
+  - Mock Tests
+  - Settings
+- Admin navigation includes:
+  - Dashboard
+  - Profile
+  - Users
+  - Departments
+  - Problems
+  - Existing Problems
+  - Contests
+  - Mock Tests
+  - Placement Companies
+  - Placement Questions
+  - Analytics
+  - Settings
+
+Theme and shell features:
+- Both admin and teacher pages use the same application shell.
+- Top bar shows role-specific workspace label:
+  - Control Center for admin
+  - Faculty Desk for teacher
+- Both can toggle dark/light theme.
+- Both can view profile from the top bar.
+- Both can sign out from the profile menu.
+
+Data and workflow conventions:
+- Problem management relies on reportable 6-digit problem IDs.
+- Department names are normalized to uppercase in backend logic.
+- Teacher access to students is department-scoped.
+- Admin user actions generate audit activity logs.
+- Mock tests support reusable problem selection flows.
+
+==================================================
+4. IMPORTANT IMPLEMENTATION NOTES
+==================================================
+
+These notes reflect the current codebase behavior.
+
+- Teacher user management is intentionally limited compared to admin user management.
+- Teacher analytics are lightweight and derived from visible student lists, not full platform analytics.
+- Teacher mock test management currently uses the admin mock test endpoints, but the backend allows teachers to use them.
+- Admin problem creation and dedicated contest management both exist, so contest creation appears in two places.
+- The admin question modal prepares constraints in payload, but the visible form currently does not expose a dedicated constraints textarea in the UI.
+- The sidebar contains a teacher navigation item for /teacher/students labeled "Progress", but the route defined in App.jsx is /teacher/users rather than /teacher/students.
+
+End of document.

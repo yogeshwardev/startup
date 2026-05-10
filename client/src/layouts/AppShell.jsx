@@ -3,30 +3,33 @@ import {
   BookOpen,
   Briefcase,
   Building2,
-  ChevronLeft,
   LayoutDashboard,
   Menu,
-  Moon,
   Settings,
   ShieldCheck,
-  Sun,
   Users,
   X,
+  LogOut,
+  Bell,
+  Code2,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useTheme } from "../hooks/useTheme";
 
 const roleNavigation = {
   STUDENT: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/profile", label: "Profile", icon: Users },
-    { to: "/problems", label: "Problems", icon: BookOpen },
+    { to: "/problems", label: "Problems", icon: Code2 },
+    { to: "/submissions", label: "Submissions", icon: BookOpen },
     { to: "/contest", label: "Contests", icon: ShieldCheck },
     { to: "/leaderboard", label: "Leaderboard", icon: BarChart3 },
-    { to: "/placement", label: "Placement", icon: Briefcase },
     { to: "/department-war", label: "Department War", icon: Building2 },
+    { to: "/placement", label: "Placement Hub", icon: Briefcase },
+    { to: "/profile", label: "Profile", icon: Users },
   ],
   TEACHER: [
     { to: "/teacher", label: "Dashboard", icon: LayoutDashboard },
@@ -49,21 +52,26 @@ const roleNavigation = {
     { to: "/admin/mock-tests", label: "Mock Tests", icon: ShieldCheck },
     { to: "/admin/placement/companies", label: "Placement Companies", icon: Briefcase },
     { to: "/admin/placement/questions", label: "Placement Questions", icon: BookOpen },
-    { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/admin/settings", label: "Settings", icon: Settings },
   ],
 };
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+};
+
 const AppShell = ({ children }) => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const links = roleNavigation[user?.role] || [];
+  const links = roleNavigation[user?.role || "STUDENT"] || [];
   const currentPage = useMemo(
     () =>
       [...links]
@@ -81,128 +89,210 @@ const AppShell = ({ children }) => {
     navigate("/auth");
   };
 
+  const userInitials = user?.name
+    ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+    : user?.email?.slice(0, 2).toUpperCase() || "CA";
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      {sidebarOpen ? (
+    <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-30 bg-slate-950/30 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
-      ) : null}
+      )}
 
-      {/* Top Navigation */}
-      <header className="app-surface sticky top-3 z-40 mx-3 rounded-xl shadow-sm">
-        <div className="px-5 py-3.5">
-          {/* Logo and Workspace */}
-          <div className="flex items-center justify-between gap-4 mb-3.5">
-            <Link
-              to="/"
-              className="font-display text-xl font-bold text-slate-900 dark:text-white flex-shrink-0"
+      {/* ═══ Sidebar ═══ */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex-shrink-0 flex flex-col transition-all duration-300 ease-out lg:static lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } ${isCollapsed ? "w-[68px]" : "w-[240px]"}`}
+        style={{
+          background: "var(--bg-surface)",
+          borderRight: "1px solid var(--border-default)",
+        }}
+      >
+        {/* Logo */}
+        <div className={`h-[64px] flex items-center shrink-0 ${isCollapsed ? "justify-center px-0" : "justify-between px-5"}`}
+          style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+          <Link to="/" className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-4.5 h-4.5 text-white" strokeWidth={2} />
+            </div>
+            {!isCollapsed && (
+              <span className="font-display font-bold text-[15px] tracking-tight" style={{ color: "var(--text-primary)" }}>
+                CampusArena
+              </span>
+            )}
+          </Link>
+          {!isCollapsed && (
+            <button className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg transition-all"
+              style={{ color: "var(--text-muted)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.background = "transparent"; }}
+              onClick={() => setIsCollapsed(true)}>
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
+          <button className="lg:hidden transition" style={{ color: "var(--text-muted)" }} onClick={() => setSidebarOpen(false)}>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Navigation Links */}
+        <div className={`flex-1 overflow-y-auto py-3 space-y-0.5 ${isCollapsed ? "px-2" : "px-3"}`}>
+          {isCollapsed && (
+            <button
+              className="hidden lg:flex w-full items-center justify-center py-2 mb-2 rounded-lg transition-all"
+              style={{ color: "var(--text-muted)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.background = "transparent"; }}
+              onClick={() => setIsCollapsed(false)}
             >
-              CampusArena
-            </Link>
-            <div className="hidden md:flex items-center gap-3">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+          {links.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                title={isCollapsed ? item.label : undefined}
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `group relative flex items-center rounded-lg py-2.5 text-[13px] font-medium transition-all duration-200 overflow-hidden whitespace-nowrap ${
+                    isCollapsed ? "justify-center px-0" : "gap-3 px-3"
+                  } ${
+                    isActive
+                      ? "text-brand-400"
+                      : ""
+                  }`
+                }
+                style={({ isActive }) => ({
+                  background: isActive ? "rgba(99, 102, 241, 0.08)" : "transparent",
+                  color: isActive ? undefined : "var(--text-secondary)",
+                })}
+              >
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-brand-500" />
+                    )}
+                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.8} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </>
+                )}
+              </NavLink>
+            );
+          })}
+        </div>
+
+        {/* Logout Button */}
+        <div className="p-3 shrink-0" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+          <button
+            onClick={handleLogout}
+            title={isCollapsed ? "Logout" : undefined}
+            className={`flex items-center rounded-lg py-2.5 text-[13px] font-medium text-rose-400 hover:bg-rose-500/10 transition-all ${
+              isCollapsed ? "justify-center px-0 w-full" : "gap-3 px-3 w-full"
+            }`}
+          >
+            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.8} />
+            {!isCollapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* ═══ Main Content Area ═══ */}
+      <div className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
+        {/* Top Header */}
+        <header className="h-[64px] flex-shrink-0" style={{ borderBottom: "1px solid var(--border-default)", background: "var(--bg-surface)" }}>
+          <div className="flex items-center justify-between h-full px-5 lg:px-7">
+            <div className="flex items-center gap-4">
               <button
                 type="button"
-                className="app-muted rounded-lg p-2.5"
-                onClick={toggleTheme}
+                className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                style={{ color: "var(--text-secondary)" }}
+                onClick={() => setSidebarOpen(true)}
               >
-                {theme === "dark" ? (
-                  <Sun className="h-5 w-5 text-amber-300" />
-                ) : (
-                  <Moon className="h-5 w-5 text-slate-600" />
-                )}
+                <Menu className="h-5 w-5" />
               </button>
+              <div className="hidden sm:block">
+                <p className="text-[10px] font-semibold tracking-[0.12em] uppercase mb-0.5" style={{ color: "var(--text-muted)" }}>
+                  Campus Learning Platform
+                </p>
+                <h2 className="text-base font-semibold leading-tight" style={{ color: "var(--text-primary)" }}>
+                  {getGreeting()}, <span className="text-brand-400">{user?.name || user?.email || "Student"}</span>
+                </h2>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 relative">
+              {/* Notification Bell */}
+              <button className="relative w-9 h-9 flex items-center justify-center transition-all rounded-lg hover:bg-white/[0.04]"
+                style={{ color: "var(--text-secondary)" }}>
+                <Bell className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-brand-500 rounded-full" />
+              </button>
+
+              {/* Profile Pill */}
               <div className="relative">
                 <button
-                  type="button"
-                  className="app-muted flex items-center gap-2.5 rounded-lg px-3 py-2.5"
-                  onClick={() => setProfileOpen((current) => !current)}
+                  className="flex items-center gap-2.5 rounded-lg pl-1 pr-3 py-1 cursor-pointer transition-all hover:bg-white/[0.04]"
+                  style={{ border: "1px solid var(--border-default)" }}
+                  onClick={() => setProfileOpen(!profileOpen)}
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-slate-900 text-xs font-semibold text-white dark:bg-slate-100 dark:text-slate-900">
-                    {user?.name?.slice(0, 2).toUpperCase()}
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-500 text-[10px] font-bold text-white">
+                    {userInitials}
                   </div>
-                  <span className="hidden sm:inline text-sm font-medium text-slate-900 dark:text-white">
-                    {user?.name}
-                  </span>
+                  <div className="hidden md:flex flex-col text-left">
+                    <span className="text-[12px] font-semibold leading-tight" style={{ color: "var(--text-primary)" }}>{user?.name || user?.email}</span>
+                    <span className="text-[10px] font-medium leading-tight" style={{ color: "var(--text-muted)" }}>
+                      {user?.role || "STUDENT"} · {user?.department || "CSE"}
+                    </span>
+                  </div>
                 </button>
 
-                {profileOpen ? (
-                  <div className="app-surface absolute right-0 top-[calc(100%+0.5rem)] z-[70] w-56 rounded-xl p-3 shadow-lg">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white">
-                      {user?.name}
-                    </p>
-                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                      {user?.department} • Year {user?.year}
-                    </p>
+                {profileOpen && (
+                  <div
+                    className="absolute right-0 top-[calc(100%+6px)] w-52 rounded-xl p-3 z-[70] animate-scale-in"
+                    style={{
+                      background: "var(--bg-elevated)",
+                      border: "1px solid var(--border-default)",
+                      boxShadow: "0 16px 48px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{user?.name || user?.email}</p>
+                    <p className="mt-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>{user?.department} · Year {user?.year}</p>
+                    <div className="my-2.5" style={{ borderTop: "1px solid var(--border-subtle)" }} />
                     <Link
                       to={user?.id ? `/profile/${user.id}` : "/profile"}
-                      className="mt-3 block w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-center text-sm font-medium text-slate-700 dark:border-white/10 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition"
+                      className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-all hover:bg-white/[0.04]"
+                      style={{ color: "var(--text-secondary)" }}
                       onClick={() => setProfileOpen(false)}
                     >
                       View Profile
                     </Link>
                     <button
                       type="button"
-                      className="mt-2 w-full rounded-lg bg-slate-900 px-3.5 py-2.5 text-sm font-medium text-white dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 transition"
+                      className="mt-0.5 block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all"
                       onClick={handleLogout}
                     >
                       Sign out
                     </button>
                   </div>
-                ) : null}
+                )}
               </div>
             </div>
-
-            <button
-              type="button"
-              className="md:hidden rounded-full p-2"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              <Menu className="h-5 w-5 text-slate-600 dark:text-slate-300" />
-            </button>
           </div>
+        </header>
 
-          {/* Workspace Card */}
-          <div className="mb-4 rounded-xl bg-slate-100 dark:bg-slate-800 px-4 py-3 border border-slate-200 dark:border-slate-700">
-            <p className="text-xs uppercase tracking-widest font-semibold text-slate-600 dark:text-slate-400">
-              {user?.role} • {user?.role === "ADMIN"
-                ? "Control Center"
-                : user?.role === "TEACHER"
-                  ? "Faculty Desk"
-                  : "Student Arena"}
-            </p>
-          </div>
-
-          {/* Navigation Menu */}
-          <nav className="flex flex-wrap gap-1.5 overflow-x-auto pb-2">
-            {links.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition whitespace-nowrap ${
-                      isActive
-                        ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                    }`
-                  }
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </NavLink>
-              );
-            })}
-          </nav>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-[1600px] p-3 md:p-4">
-        <main className="min-h-[calc(100vh-200px)]">{children}</main>
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-y-auto p-5 lg:p-7">
+          {children}
+        </main>
       </div>
     </div>
   );

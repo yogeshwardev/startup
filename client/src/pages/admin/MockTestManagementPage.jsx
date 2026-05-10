@@ -169,7 +169,7 @@ const MockTestManagementPage = () => {
                     title: event.target.value,
                   }))
                 }
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                 placeholder="Placement Round 1"
                 required
               />
@@ -195,7 +195,7 @@ const MockTestManagementPage = () => {
                       durationMinutes: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-brand-400"
                   required
                 />
               </div>
@@ -216,7 +216,7 @@ const MockTestManagementPage = () => {
                       company: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                   placeholder="Google, Amazon, etc."
                 />
               </div>
@@ -232,7 +232,7 @@ const MockTestManagementPage = () => {
                 <input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                   placeholder="Search by title, ID, or difficulty..."
                 />
               </div>
@@ -247,12 +247,12 @@ const MockTestManagementPage = () => {
                       problemCodes: event.target.value,
                     }))
                   }
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-brand-400"
+                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-slate-500 focus:border-brand-400"
                   placeholder="Add by problem ID, comma separated"
                 />
                 <button
                   type="button"
-                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
+                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
                   onClick={addProblemsByCode}
                 >
                   Add IDs
@@ -265,7 +265,7 @@ const MockTestManagementPage = () => {
                   filteredProblems.map((problem) => (
                     <label
                       key={problem._id}
-                      className="app-muted flex cursor-pointer items-start gap-3 rounded-[1.5rem] p-4 transition hover:bg-white/5"
+                      className="card-surface flex cursor-pointer items-start gap-3 rounded-[1.5rem] p-4 transition hover:bg-white/5"
                     >
                       <input
                         type="checkbox"
@@ -274,7 +274,7 @@ const MockTestManagementPage = () => {
                         className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-950 text-brand-500 focus:ring-brand-400"
                       />
                       <div className="flex-1">
-                        <p className="font-semibold text-white">{problem.title}</p>
+                        <p className="font-semibold text-[var(--text-primary)]">{problem.title}</p>
                         <p className="mt-1 text-sm text-slate-400">
                           ID {problem.problemCode} • {problem.difficulty} • {problem.slug}
                         </p>
@@ -290,7 +290,7 @@ const MockTestManagementPage = () => {
             <button
               type="submit"
               disabled={saving || mockTestForm.selectedProblemIds.length === 0}
-              className="w-full rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {saving ? "Creating..." : "Create mock test"}
             </button>
@@ -304,9 +304,9 @@ const MockTestManagementPage = () => {
                 {selectedProblems.map((problem, index) => (
                   <div
                     key={problem._id}
-                    className="app-muted rounded-[1.5rem] p-4"
+                    className="card-surface rounded-[1.5rem] p-4"
                   >
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {index + 1}. {problem.title}
                     </p>
                     <p className="mt-1 text-sm text-slate-400">
@@ -329,11 +329,11 @@ const MockTestManagementPage = () => {
                 {mockTests.map((mockTest) => (
                   <div
                     key={mockTest._id}
-                    className="app-muted rounded-[1.5rem] p-4"
+                    className="card-surface rounded-[1.5rem] p-4"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="font-semibold text-white">{mockTest.title}</p>
+                        <p className="font-semibold text-[var(--text-primary)]">{mockTest.title}</p>
                         <div className="mt-2 flex flex-wrap gap-2 text-sm text-slate-400">
                           <span className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
@@ -368,3 +368,6 @@ const MockTestManagementPage = () => {
 };
 
 export default MockTestManagementPage;
+
+
+

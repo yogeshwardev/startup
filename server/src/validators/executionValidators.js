@@ -1,8 +1,9 @@
 import { body } from "express-validator";
+import { SUPPORTED_LANGUAGES } from "../constants/languages.js";
 
 export const runCodeValidator = [
   body("code").trim().notEmpty().withMessage("Code is required."),
-  body("language").isIn(["python", "cpp", "java"]).withMessage("Unsupported language."),
+  body("language").isIn(SUPPORTED_LANGUAGES).withMessage("Unsupported language."),
   body("stdin").optional().isString().withMessage("stdin must be a string."),
   body("problemId").optional().isMongoId().withMessage("problemId must be valid."),
 ];

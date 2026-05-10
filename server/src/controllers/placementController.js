@@ -7,7 +7,27 @@ import { ApiError } from "../utils/ApiError.js";
 // Get all companies
 export const getAllCompanies = catchAsync(async (req, res) => {
   const companies = await Company.find().lean();
-  res.json(companies);
+  
+  const questionCounts = await Question.aggregate([
+    {
+      $group: {
+        _id: "$companyName",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const countMap = questionCounts.reduce((acc, curr) => {
+    acc[curr._id] = curr.count;
+    return acc;
+  }, {});
+
+  const enhancedCompanies = companies.map((c) => ({
+    ...c,
+    totalQuestions: countMap[c.name] || 0,
+  }));
+
+  res.json(enhancedCompanies);
 });
 
 // Get company by name with questions summary

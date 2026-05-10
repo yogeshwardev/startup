@@ -35,10 +35,10 @@ const DepartmentsPage = () => {
         ) : departments.length ? (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {departments.map((department) => (
-              <article key={department._id} className="app-muted rounded-[1.75rem] p-5">
+              <article key={department._id} className="card-surface rounded-[1.75rem] p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-500">Department</p>
-                <h3 className="mt-3 text-xl font-semibold text-slate-900 dark:text-white">{department.name}</h3>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                <h3 className="mt-3 text-xl font-semibold text-slate-900">{department.name}</h3>
+                <p className="mt-2 text-sm text-slate-500">
                   {user?.role === "ADMIN" ? "Ready for user provisioning and leaderboard segmentation." : "Visible to faculty for class coordination and student filtering."}
                 </p>
               </article>
@@ -53,3 +53,6 @@ const DepartmentsPage = () => {
 };
 
 export default DepartmentsPage;
+
+
+

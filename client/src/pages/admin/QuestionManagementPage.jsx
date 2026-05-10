@@ -140,7 +140,7 @@ const AdminQuestionManagementPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold text-white">
+          <h1 className="flex items-center gap-2 text-3xl font-bold text-[var(--text-primary)]">
             <FileText className="h-8 w-8 text-brand-500" />
             Manage Questions
           </h1>
@@ -148,7 +148,7 @@ const AdminQuestionManagementPage = () => {
         </div>
         <button
           onClick={handleAdd}
-          className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 font-medium text-white hover:bg-brand-600 transition"
+          className="flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 font-medium text-[var(--text-primary)] hover:bg-brand-600 transition"
         >
           <Plus className="h-5 w-5" />
           Add Question
@@ -160,7 +160,7 @@ const AdminQuestionManagementPage = () => {
         <select
           value={selectedCompany}
           onChange={(e) => setSelectedCompany(e.target.value)}
-          className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+          className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
         >
           {companies.map((company) => (
             <option key={company._id} value={company.name}>
@@ -184,7 +184,7 @@ const AdminQuestionManagementPage = () => {
               className="rounded-lg bg-white/5 border border-white/10 p-4 flex items-start justify-between hover:border-white/20 transition"
             >
               <div className="flex-1">
-                <h3 className="font-semibold text-white">{question.title}</h3>
+                <h3 className="font-semibold text-[var(--text-primary)]">{question.title}</h3>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="inline-block rounded-full bg-blue-500/20 px-2.5 py-1 text-xs font-medium text-blue-300">
                     {question.type}
@@ -232,7 +232,7 @@ const AdminQuestionManagementPage = () => {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
                 >
                   <option value="coding">Coding</option>
                   <option value="aptitude">Aptitude</option>
@@ -244,7 +244,7 @@ const AdminQuestionManagementPage = () => {
                 <select
                   value={formData.difficulty}
                   onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
                 >
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
@@ -260,7 +260,7 @@ const AdminQuestionManagementPage = () => {
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
                   placeholder="e.g., Arrays, Strings"
                   required
                 />
@@ -271,7 +271,7 @@ const AdminQuestionManagementPage = () => {
                   type="text"
                   value={formData.topic}
                   onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
                   placeholder="e.g., Array Manipulation"
                   required
                 />
@@ -284,7 +284,7 @@ const AdminQuestionManagementPage = () => {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
                 required
               />
             </div>
@@ -294,7 +294,7 @@ const AdminQuestionManagementPage = () => {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition h-20 resize-none"
+                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition h-20 resize-none"
               />
             </div>
 
@@ -306,7 +306,7 @@ const AdminQuestionManagementPage = () => {
                 type="text"
                 value={formData.tags}
                 onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white outline-none focus:border-brand-500 transition"
+                className="w-full rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-[var(--text-primary)] outline-none focus:border-brand-500 transition"
               />
             </div>
 
@@ -317,13 +317,13 @@ const AdminQuestionManagementPage = () => {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="rounded-lg border border-white/20 px-4 py-2 font-medium text-white hover:bg-white/10 transition"
+                className="rounded-lg border border-white/20 px-4 py-2 font-medium text-[var(--text-primary)] hover:bg-white/10 transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="rounded-lg bg-brand-500 px-4 py-2 font-medium text-white hover:bg-brand-600 transition"
+                className="rounded-lg bg-brand-500 px-4 py-2 font-medium text-[var(--text-primary)] hover:bg-brand-600 transition"
               >
                 {editingQuestion ? "Update" : "Add"} Question
               </button>
@@ -336,3 +336,6 @@ const AdminQuestionManagementPage = () => {
 };
 
 export default AdminQuestionManagementPage;
+
+
+

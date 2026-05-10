@@ -10,8 +10,17 @@ import { ApiError } from "../utils/ApiError.js";
 
 export const runCode = catchAsync(async (req, res) => {
   const problem = req.body.problemId ? await Problem.findById(req.body.problemId) : null;
+  let finalCode = req.body.code;
+  if (problem?.driverCode?.[req.body.language]) {
+    const driver = problem.driverCode[req.body.language];
+    const marker = req.body.language === "python" ? "# __USER_CODE_HERE__" : "// __USER_CODE_HERE__";
+    if (driver.includes(marker)) {
+      finalCode = driver.replace(marker, finalCode);
+    }
+  }
+
   const result = await executeCode({
-    code: req.body.code,
+    code: finalCode,
     language: req.body.language,
     stdin: req.body.stdin || "",
     timeLimitMs: problem?.timeLimitMs || 2000,

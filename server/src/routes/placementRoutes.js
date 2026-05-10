@@ -22,6 +22,7 @@ import {
 } from "../controllers/placementController.js";
 import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
+import { SUPPORTED_LANGUAGES } from "../constants/languages.js";
 
 const router = Router();
 
@@ -83,7 +84,7 @@ router.post(
   validate([
     body("questionId").isMongoId().withMessage("Valid question ID is required."),
     body("code").trim().notEmpty().withMessage("Code is required."),
-    body("language").isIn(["python", "cpp", "java"]).withMessage("Invalid language."),
+    body("language").isIn(SUPPORTED_LANGUAGES).withMessage("Invalid language."),
   ]),
   submitPlacementSolution
 );
