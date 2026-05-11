@@ -12,7 +12,9 @@ import CompanyManagementPage from "./pages/admin/CompanyManagementPage";
 import QuestionManagementPage from "./pages/admin/QuestionManagementPage";
 import AuthPage from "./pages/AuthPage";
 import AnalyticsPage from "./pages/shared/AnalyticsPage";
+import AnnouncementManagementPage from "./pages/shared/AnnouncementManagementPage";
 import ConnectionsPage from "./pages/shared/ConnectionsPage";
+import CompilerPage from "./pages/shared/CompilerPage";
 import DepartmentsPage from "./pages/shared/DepartmentsPage";
 import SettingsPage from "./pages/shared/SettingsPage";
 import UserProfilePage from "./pages/shared/UserProfilePage";
@@ -87,6 +89,16 @@ const App = () => {
           <ProtectedRoute roles={["STUDENT"]}>
             <AppShell>
               <ProblemWorkspacePage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/compiler"
+        element={
+          <ProtectedRoute roles={["STUDENT"]}>
+            <AppShell>
+              <CompilerPage />
             </AppShell>
           </ProtectedRoute>
         }
@@ -192,6 +204,16 @@ const App = () => {
         }
       />
       <Route
+        path="/teacher/announcements"
+        element={
+          <ProtectedRoute roles={["TEACHER", "ADMIN"]}>
+            <AppShell>
+              <AnnouncementManagementPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/teacher/departments"
         element={
           <ProtectedRoute roles={["TEACHER", "ADMIN"]}>
@@ -277,6 +299,16 @@ const App = () => {
           <ProtectedRoute roles={["ADMIN"]}>
             <AppShell>
               <UserCreatePage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/announcements"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AppShell>
+              <AnnouncementManagementPage />
             </AppShell>
           </ProtectedRoute>
         }

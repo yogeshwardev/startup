@@ -12,7 +12,7 @@ export const LANGUAGE_CONFIG = {
   cpp: {
     extension: "cpp",
     fileName: "main.cpp",
-    executeCommand: "g++ main.cpp -o main && ./main",
+    executeCommand: "g++ -std=c++17 main.cpp -o main && ./main",
   },
   java: {
     extension: "java",

@@ -4,6 +4,7 @@ import { PracticeSession } from "../models/PracticeSession.js";
 import { Submission } from "../models/Submission.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { ApiError } from "../utils/ApiError.js";
+import { normalizeStarterCode } from "../utils/codeInjection.js";
 
 const slugify = (value) =>
   value
@@ -120,8 +121,11 @@ export const getProblemBySlug = catchAsync(async (req, res) => {
     Bookmark.findOne({ userId: req.user._id, problemId: problem._id }),
   ]);
 
+  const payload = problem.toObject();
+
   res.json({
-    ...problem.toObject(),
+    ...payload,
+    starterCode: normalizeStarterCode(payload.starterCode),
     bookmarked: Boolean(bookmarked),
     submissions,
   });

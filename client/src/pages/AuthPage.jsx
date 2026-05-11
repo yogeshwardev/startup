@@ -43,17 +43,17 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen font-body overflow-x-hidden" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
-      {/* Subtle background gradient */}
+      {/* Subtle product backdrop */}
       <div className="fixed inset-0 pointer-events-none z-0"
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99, 102, 241, 0.06) 0%, transparent 60%)"
+          background: "linear-gradient(180deg, rgba(47, 158, 68, 0.055) 0%, transparent 260px)"
         }}
       />
 
       {/* Navbar */}
       <nav className="relative z-20 flex items-center justify-between px-6 py-4 max-w-[1200px] mx-auto w-full md:px-10 lg:px-14">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-brand-600 flex items-center justify-center">
             <GraduationCap className="w-4 h-4 text-[var(--text-primary)]" strokeWidth={2} />
           </div>
           <span className="font-display font-bold text-lg tracking-tight">CampusArena</span>
@@ -72,34 +72,33 @@ const AuthPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <main className="relative z-10 max-w-[1200px] mx-auto px-6 py-16 md:py-20 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <main className="relative z-10 max-w-[1200px] mx-auto px-6 py-14 md:py-18 md:px-10 lg:px-14 grid lg:grid-cols-[0.92fr_1.08fr] gap-10 lg:gap-14 items-center">
         <div className="space-y-7">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brand-300 animate-slide-up"
-            style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.15)" }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brand-400 animate-slide-up"
+            style={{ background: "rgba(47, 158, 68, 0.12)", border: "1px solid rgba(81, 207, 102, 0.18)" }}>
             <GraduationCap className="w-3.5 h-3.5" />
-            Built for campus placements
+            Coding, contests, placements
           </div>
 
-          <h1 className="font-display text-4xl md:text-6xl lg:text-[4.5rem] font-extrabold leading-[1.08] tracking-tight animate-slide-up" style={{ animationDelay: "100ms" }}>
-            Master the <br/>
-            <span className="gradient-text">Code.</span><br/>
-            Land the <br/>
-            Dream Job.
+          <h1 className="font-display text-4xl md:text-6xl lg:text-[4.1rem] font-extrabold leading-[1.08] tracking-tight animate-slide-up" style={{ animationDelay: "100ms" }}>
+            CampusArena <br/>
+            for serious <br/>
+            <span className="gradient-text">coding prep.</span>
           </h1>
 
           <p className="text-base leading-relaxed max-w-lg font-medium animate-slide-up" style={{ animationDelay: "200ms", color: "var(--text-secondary)" }}>
-            The campus platform for coding readiness and placement preparation. Practice problems, compete in department wars, and prepare company by company.
+            A dark, focused practice platform for problems, contests, submissions, mock tests, placement preparation, and role-based admin controls.
           </p>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-2 animate-slide-up" style={{ animationDelay: "300ms" }}>
             <button onClick={() => handleOpenAuth("register")}
               className="group btn-primary px-7 py-3.5 font-bold flex items-center gap-2 text-[15px]">
-              Join CampusArena
+              Start practicing
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <button onClick={() => handleOpenAuth("login")}
               className="btn-secondary px-7 py-3.5 font-bold text-[15px]">
-              Explore Problems
+              Login
             </button>
           </div>
 
@@ -125,13 +124,13 @@ const AuthPage = () => {
         <div className="relative z-10 lg:pl-6 animate-slide-up" style={{ animationDelay: "200ms" }}>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { icon: Code2, title: "500+ Problems", desc: "Practice across all difficulty levels", color: "text-brand-400", bg: "bg-brand-500/10" },
-              { icon: Trophy, title: "Live Contests", desc: "Compete in real-time coding battles", color: "text-amber-400", bg: "bg-amber-500/10" },
-              { icon: Target, title: "Placement Prep", desc: "Company-wise question banks", color: "text-emerald-400", bg: "bg-emerald-500/10" },
-              { icon: BookOpen, title: "Track Progress", desc: "Monitor your coding journey", color: "text-cyan-400", bg: "bg-cyan-500/10" },
+              { icon: Code2, title: "Problem Bank", desc: "LeetCode-style practice workspace", color: "text-brand-400", bg: "bg-brand-500/10" },
+              { icon: Trophy, title: "Live Contests", desc: "Ranked campus coding rounds", color: "text-brand-400", bg: "bg-brand-500/10" },
+              { icon: Target, title: "Placement Prep", desc: "Company-wise preparation flow", color: "text-brand-400", bg: "bg-brand-500/10" },
+              { icon: BookOpen, title: "Admin Control", desc: "Manage users, tests, and content", color: "text-brand-400", bg: "bg-brand-500/10" },
             ].map((feat) => (
               <div key={feat.title} className="card-interactive p-5 hover-lift">
-                <div className={`w-10 h-10 rounded-lg ${feat.bg} flex items-center justify-center mb-3`}>
+                <div className={`w-10 h-10 rounded-md ${feat.bg} flex items-center justify-center mb-3`}>
                   <feat.icon className={`w-5 h-5 ${feat.color}`} strokeWidth={1.8} />
                 </div>
                 <h3 className="text-sm font-bold mb-1" style={{ color: "var(--text-primary)" }}>{feat.title}</h3>

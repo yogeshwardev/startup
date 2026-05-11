@@ -14,7 +14,8 @@ import {
   Code2,
   ChevronLeft,
   ChevronRight,
-  GraduationCap
+  GraduationCap,
+  Megaphone
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ const roleNavigation = {
   STUDENT: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/problems", label: "Problems", icon: Code2 },
+    { to: "/compiler", label: "Compiler", icon: Code2 },
     { to: "/submissions", label: "Submissions", icon: BookOpen },
     { to: "/contest", label: "Contests", icon: ShieldCheck },
     { to: "/leaderboard", label: "Leaderboard", icon: BarChart3 },
@@ -36,6 +38,7 @@ const roleNavigation = {
     { to: "/profile", label: "Profile", icon: Users },
     { to: "/teacher/users", label: "Users", icon: Users },
     { to: "/teacher/students", label: "Progress", icon: BarChart3 },
+    { to: "/teacher/announcements", label: "Announcements", icon: Megaphone },
     { to: "/teacher/departments", label: "Departments", icon: Building2 },
     { to: "/teacher/problems", label: "Problems", icon: BookOpen },
     { to: "/teacher/mock-tests", label: "Mock Tests", icon: ShieldCheck },
@@ -45,9 +48,9 @@ const roleNavigation = {
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { to: "/profile", label: "Profile", icon: Users },
     { to: "/admin/users", label: "Users", icon: Users },
+    { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
     { to: "/admin/departments", label: "Departments", icon: Building2 },
     { to: "/admin/problems", label: "Problems", icon: BookOpen },
-    { to: "/admin/problems/existing", label: "Existing Problems", icon: BookOpen },
     { to: "/admin/contests", label: "Contests", icon: ShieldCheck },
     { to: "/admin/mock-tests", label: "Mock Tests", icon: ShieldCheck },
     { to: "/admin/placement/companies", label: "Placement Companies", icon: Briefcase },
@@ -110,7 +113,7 @@ const AppShell = ({ children }) => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isCollapsed ? "w-[68px]" : "w-[240px]"}`}
         style={{
-          background: "var(--bg-surface)",
+          background: "var(--bg-shell)",
           borderRight: "1px solid var(--border-default)",
         }}
       >
@@ -118,7 +121,7 @@ const AppShell = ({ children }) => {
         <div className={`h-[64px] flex items-center shrink-0 ${isCollapsed ? "justify-center px-0" : "justify-between px-5"}`}
           style={{ borderBottom: "1px solid var(--border-subtle)" }}>
           <Link to="/" className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-brand-600 flex items-center justify-center shrink-0">
               <GraduationCap className="w-4.5 h-4.5 text-white" strokeWidth={2} />
             </div>
             {!isCollapsed && (
@@ -172,7 +175,7 @@ const AppShell = ({ children }) => {
                   }`
                 }
                 style={({ isActive }) => ({
-                  background: isActive ? "rgba(99, 102, 241, 0.08)" : "transparent",
+                  background: isActive ? "rgba(47, 158, 68, 0.12)" : "transparent",
                   color: isActive ? undefined : "var(--text-secondary)",
                 })}
               >
@@ -208,7 +211,7 @@ const AppShell = ({ children }) => {
       {/* ═══ Main Content Area ═══ */}
       <div className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="h-[64px] flex-shrink-0" style={{ borderBottom: "1px solid var(--border-default)", background: "var(--bg-surface)" }}>
+        <header className="h-[64px] flex-shrink-0" style={{ borderBottom: "1px solid var(--border-default)", background: "rgba(17, 19, 24, 0.94)" }}>
           <div className="flex items-center justify-between h-full px-5 lg:px-7">
             <div className="flex items-center gap-4">
               <button
@@ -244,7 +247,7 @@ const AppShell = ({ children }) => {
                   style={{ border: "1px solid var(--border-default)" }}
                   onClick={() => setProfileOpen(!profileOpen)}
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-500 text-[10px] font-bold text-white">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-600 text-[10px] font-bold text-white">
                     {userInitials}
                   </div>
                   <div className="hidden md:flex flex-col text-left">

@@ -4,11 +4,7 @@ export const ThemeContext = createContext(null);
 
 const getInitialTheme = () => {
   const stored = localStorage.getItem("campusarena-theme");
-  if (stored === "light" || stored === "dark") {
-    return stored;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return stored === "dark" ? stored : "dark";
 };
 
 export const ThemeProvider = ({ children }) => {
@@ -21,11 +17,11 @@ export const ThemeProvider = ({ children }) => {
 
   const value = useMemo(
     () => ({
-      theme,
+      theme: "dark",
       setTheme,
-      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+      toggleTheme: () => setTheme("dark"),
     }),
-    [theme]
+    []
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

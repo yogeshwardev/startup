@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import http from "../../api/http";
 import Skeleton from "../../components/Skeleton";
-import { Flame, Zap, Trophy, Target, ArrowRight, Code, GraduationCap } from "lucide-react";
+import { Flame, Zap, Trophy, Target, ArrowRight, GraduationCap, Megaphone } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const StatCardItem = ({ icon: Icon, iconColor, iconBg, label, value }) => (
@@ -31,13 +31,18 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const StudentDashboard = () => {
   const [dashboard, setDashboard] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const dashboardRes = await http.get("/dashboard");
+        const [dashboardRes, announcementsRes] = await Promise.all([
+          http.get("/dashboard"),
+          http.get("/announcements"),
+        ]);
         setDashboard(dashboardRes.data);
+        setAnnouncements(announcementsRes.data);
       } catch (err) {
         setDashboard({
           streak: 0,
@@ -45,9 +50,9 @@ const StudentDashboard = () => {
           rank: 1,
           accuracy: 0,
           todaysProblem: null,
-          recentSubmissions: [],
           activityData: []
         });
+        setAnnouncements([]);
       }
       setLoading(false);
     };
@@ -163,38 +168,43 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {/* Recent Submissions */}
+          {/* Announcements */}
           <div className="card p-5 animate-slide-up" style={{ animationDelay: "400ms" }}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-emerald-400" />
-                <h3 className="text-sm font-bold font-display" style={{ color: "var(--text-primary)" }}>Recent Submissions</h3>
+                <Megaphone className="w-4 h-4 text-brand-400" />
+                <h3 className="text-sm font-bold font-display" style={{ color: "var(--text-primary)" }}>Announcements</h3>
               </div>
-              <Link to="/submissions" className="text-[10px] font-bold hover:text-brand-400 transition-all flex items-center gap-1 uppercase tracking-widest"
-                style={{ color: "var(--text-muted)" }}>
-                View All <ArrowRight className="w-3 h-3" />
-              </Link>
             </div>
 
             <div className="space-y-2">
-              {dashboard.recentSubmissions?.length > 0 ? dashboard.recentSubmissions.slice(0, 5).map((sub) => (
-                <div key={sub._id} className="rounded-lg p-3 flex items-center justify-between hover:bg-white/[0.02] transition-all"
+              {announcements.length > 0 ? announcements.slice(0, 5).map((announcement) => (
+                <div key={announcement._id} className="rounded-lg p-3 hover:bg-white/[0.02] transition-all"
                   style={{ border: "1px solid var(--border-subtle)" }}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full shrink-0 ${sub.status === "Accepted" ? "bg-emerald-400" : "bg-rose-400"}`} />
-                    <div>
-                      <p className="text-sm font-semibold line-clamp-1" style={{ color: "var(--text-primary)" }}>{sub.problemId?.title || "Unknown Problem"}</p>
-                      <p className="text-[10px] mt-0.5" style={{ color: "var(--text-muted)" }}>
-                        {new Date(sub.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <span className={`badge text-[10px] ${
+                      announcement.priority === "urgent"
+                        ? "badge-danger"
+                        : announcement.priority === "important"
+                        ? "badge-warning"
+                        : "badge-info"
+                    }`}>
+                      {announcement.priority}
+                    </span>
+                    <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                      {new Date(announcement.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                  <span className={`text-[10px] font-bold tracking-widest uppercase ${sub.status === "Accepted" ? "text-emerald-400" : "text-rose-400"}`}>
-                    {sub.status}
-                  </span>
+                  <p className="text-sm font-semibold line-clamp-1" style={{ color: "var(--text-primary)" }}>{announcement.title}</p>
+                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    {announcement.message}
+                  </p>
+                  <p className="mt-2 text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    {announcement.createdBy?.name || "Campus Team"}
+                  </p>
                 </div>
               )) : (
-                <div className="text-center p-5 text-sm" style={{ color: "var(--text-muted)" }}>No recent submissions</div>
+                <div className="text-center p-5 text-sm" style={{ color: "var(--text-muted)" }}>No announcements yet</div>
               )}
             </div>
           </div>

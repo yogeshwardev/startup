@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
+import { bulkGenerateProblems } from "../controllers/aiController.js";
 import { createProblem, deleteProblem, updateProblem } from "../controllers/problemController.js";
 import { authorize, protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
@@ -8,6 +9,7 @@ import { createProblemValidator, updateProblemValidator } from "../validators/pr
 const router = Router();
 
 router.use(protect, authorize("ADMIN"));
+router.post("/bulk-generate", bulkGenerateProblems);
 router.post("/", validate(createProblemValidator), createProblem);
 router.put("/:id", validate(updateProblemValidator), updateProblem);
 router.delete("/:id", deleteProblem);

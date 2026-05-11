@@ -3,6 +3,7 @@ import { Question } from "../models/Question.js";
 import { UserProgress } from "../models/UserProgress.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { ApiError } from "../utils/ApiError.js";
+import { normalizeStarterCode } from "../utils/codeInjection.js";
 
 // Get all companies
 export const getAllCompanies = catchAsync(async (req, res) => {
@@ -109,7 +110,10 @@ export const getQuestion = catchAsync(async (req, res) => {
     throw new ApiError(404, "Question not found.");
   }
 
-  res.json(question);
+  res.json({
+    ...question,
+    starterCode: normalizeStarterCode(question.starterCode),
+  });
 });
 
 // Get questions by topic

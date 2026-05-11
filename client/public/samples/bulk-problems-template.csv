@@ -1,0 +1,4 @@
+title,difficulty,tags,description,constraints,category,companyId,timeLimitMs,memoryLimitMb
+Two Sum Campus,Easy,"array, hash map","Given an array of integers and a target, return the indices of two numbers that add up to the target.","2 <= n <= 10000; -100000 <= values <= 100000",General,,2000,256
+Longest Badge Streak,Medium,"array, dynamic programming","Given daily badge counts, find the longest streak that satisfies the contest rule.",,General,,2000,256
+Placement Route Optimizer,Hard,"graph, shortest path","Given campus route data, compute the minimum cost needed to reach the placement hall.",,Placement,,3000,512

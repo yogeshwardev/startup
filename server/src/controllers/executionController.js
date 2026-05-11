@@ -7,16 +7,17 @@ import { executeCode } from "../services/executionService.js";
 import { evaluateSubmission } from "../services/judgeService.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { ApiError } from "../utils/ApiError.js";
+import { buildExecutableCode } from "../utils/codeInjection.js";
 
 export const runCode = catchAsync(async (req, res) => {
   const problem = req.body.problemId ? await Problem.findById(req.body.problemId) : null;
   let finalCode = req.body.code;
   if (problem?.driverCode?.[req.body.language]) {
-    const driver = problem.driverCode[req.body.language];
-    const marker = req.body.language === "python" ? "# __USER_CODE_HERE__" : "// __USER_CODE_HERE__";
-    if (driver.includes(marker)) {
-      finalCode = driver.replace(marker, finalCode);
-    }
+    finalCode = buildExecutableCode({
+      driverCode: problem.driverCode[req.body.language],
+      userCode: finalCode,
+      language: req.body.language,
+    });
   }
 
   const result = await executeCode({
@@ -66,20 +67,25 @@ export const submitSolution = catchAsync(async (req, res) => {
     contestId = contest._id;
   }
 
-  const existingSubmission = await Submission.findOne({
+  // Count how many times this user has already submitted this problem (outside contests)
+  const MAX_ATTEMPTS = 10;
+  const priorSubmissions = await Submission.find({
     userId: req.user._id,
     problemId: problem._id,
     contestId,
-  }).select("_id");
+  }).select("_id").lean();
 
-  if (existingSubmission) {
+  if (priorSubmissions.length >= MAX_ATTEMPTS) {
     throw new ApiError(
-      400,
+      429,
       contestId
-        ? "You have already submitted this contest problem."
-        : "You have already submitted this problem."
+        ? "You have reached the maximum number of attempts for this contest problem."
+        : `You have attempted this problem the maximum number of times (${MAX_ATTEMPTS}). No further submissions are allowed.`
     );
   }
+
+  // Score is only awarded on the very first submission
+  const isFirstSubmission = priorSubmissions.length === 0;
 
   if (!contestId && req.body.practiceSessionId) {
     const session = await PracticeSession.findById(req.body.practiceSessionId);
@@ -113,6 +119,7 @@ export const submitSolution = catchAsync(async (req, res) => {
     contestId,
     code: req.body.code,
     language: req.body.language,
+    isFirstSubmission,
   });
 
   const job = await executionQueue.add("evaluate-submission", {

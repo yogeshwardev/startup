@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Sparkles, Trash2, Code2, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { Sparkles, Code2, ChevronDown, ChevronUp, Upload, FileDown } from "lucide-react";
 import http from "../../api/http";
 import { useToast } from "../../hooks/useToast";
 
@@ -104,27 +104,58 @@ const toProblemPayload = (form, generatedAssets) => {
   return payload;
 };
 
+const parseCsv = (text) => {
+  const rows = [];
+  let current = "";
+  let row = [];
+  let inQuotes = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+
+    if (char === '"' && next === '"') {
+      current += '"';
+      index += 1;
+    } else if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      row.push(current);
+      current = "";
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && next === "\n") index += 1;
+      row.push(current);
+      if (row.some((cell) => cell.trim())) rows.push(row);
+      row = [];
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+
+  row.push(current);
+  if (row.some((cell) => cell.trim())) rows.push(row);
+
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map((header) => header.trim());
+  return rows.slice(1).map((cells) =>
+    headers.reduce((entry, header, index) => {
+      entry[header] = (cells[index] || "").trim();
+      return entry;
+    }, {})
+  );
+};
+
 const ProblemManagementPage = () => {
   const toast = useToast();
   const [problemForm, setProblemForm] = useState(defaultProblem);
-  const [problems, setProblems] = useState([]);
   const [savingProblem, setSavingProblem] = useState(false);
   const [generatingProblem, setGeneratingProblem] = useState(false);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkResults, setBulkResults] = useState([]);
   const [generatedAssets, setGeneratedAssets] = useState(null);
   const [showSkeletons, setShowSkeletons] = useState(false);
-
-  const loadProblems = async () => {
-    try {
-      const { data } = await http.get("/problems");
-      setProblems(data);
-    } catch (error) {
-      console.error("Failed to load problems", error);
-    }
-  };
-
-  useEffect(() => {
-    loadProblems();
-  }, []);
 
   const handleGenerate = async () => {
     if (!problemForm.title || !problemForm.description) {
@@ -205,7 +236,6 @@ const ProblemManagementPage = () => {
       setProblemForm(defaultProblem);
       setGeneratedAssets(null);
       setShowSkeletons(false);
-      loadProblems();
     } catch (error) {
       toast.error(
         "Problem creation failed",
@@ -216,13 +246,43 @@ const ProblemManagementPage = () => {
     }
   };
 
-  const handleDeleteProblem = async (id) => {
+  const handleBulkUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
     try {
-      await http.delete(`/admin/problems/${id}`);
-      toast.success("Deleted", "Problem removed successfully.");
-      loadProblems();
+      setBulkUploading(true);
+      setBulkResults([]);
+      const text = await file.text();
+      const rows = parseCsv(text);
+
+      if (!rows.length) {
+        toast.error("CSV is empty", "Please upload the sample format with at least one problem title.");
+        return;
+      }
+
+      const { data } = await http.post("/admin/problems/bulk-generate", { rows });
+      setBulkResults(data.results || []);
+      toast.success(
+        "Bulk generation finished",
+        `${data.createdCount} created, ${data.failedCount} failed.`
+      );
     } catch (error) {
-      toast.error("Failed to delete", error.response?.data?.message || "Unable to delete.");
+      const message =
+        error.response?.status === 404
+          ? "Bulk route was not found. Please restart the backend server and try again."
+          : error.response?.data?.message || "Unable to generate problems from CSV.";
+      toast.error(
+        "Bulk upload failed",
+        message
+      );
+      setBulkResults(error.response?.data?.results || []);
+    } finally {
+      setBulkUploading(false);
     }
   };
 
@@ -231,10 +291,77 @@ const ProblemManagementPage = () => {
 
   return (
     <div className="mx-auto max-w-[1400px] p-4 md:p-6 lg:p-8">
-      <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <div className="mx-auto max-w-3xl">
+        <section className="mb-8 rounded-xl border border-white/5 bg-transparent p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">Bulk Add Problems</h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Upload a CSV with problem titles. Gemini generates descriptions, constraints, skeletons, drivers, and 10 hidden tests per row.
+                Larger files run row-by-row and can take a few minutes.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="/samples/bulk-problems-template.csv"
+                download
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/5"
+              >
+                <FileDown className="h-4 w-4" />
+                Sample CSV
+              </a>
+              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#4F46E5] px-4 py-3 text-sm font-bold text-[var(--text-primary)] transition hover:bg-[#4338CA]">
+                <Upload className="h-4 w-4" />
+                {bulkUploading ? "Generating..." : "Upload CSV"}
+                <input
+                  type="file"
+                  accept=".csv,text/csv"
+                  className="hidden"
+                  disabled={bulkUploading}
+                  onChange={handleBulkUpload}
+                />
+              </label>
+            </div>
+          </div>
+
+          {bulkUploading && (
+            <div className="mt-5 rounded-xl border border-[#4F46E5]/30 bg-[#4F46E5]/10 px-4 py-3 text-sm font-semibold text-slate-200">
+              Generating problems with Gemini. Keep this page open while each row is processed.
+            </div>
+          )}
+
+          {bulkResults.length > 0 && (
+            <div className="mt-5 overflow-hidden rounded-xl border border-white/5">
+              {bulkResults.map((result) => (
+                <div
+                  key={`${result.row}-${result.title}`}
+                  className="flex flex-col gap-1 border-b border-white/5 px-4 py-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                      Row {result.row}: {result.title || "Untitled"}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {result.status === "created"
+                        ? `${result.problemCode} created with ${result.hiddenTestCount} hidden tests`
+                        : result.message}
+                    </p>
+                  </div>
+                  <span
+                    className={`w-fit rounded-full px-3 py-1 text-xs font-bold ${
+                      result.status === "created"
+                        ? "bg-emerald-500/10 text-emerald-400"
+                        : "bg-red-500/10 text-red-400"
+                    }`}
+                  >
+                    {result.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
         
-        {/* Left Column: Form */}
-        <div>
           <form className="space-y-6" onSubmit={handleCreateProblem}>
             <div>
               <label className={labelClasses}>TITLE</label>
@@ -363,51 +490,6 @@ const ProblemManagementPage = () => {
               </button>
             </div>
           </form>
-        </div>
-
-        {/* Right Column: Existing Problems */}
-        <div>
-          <h2 className="mb-6 text-lg font-bold text-[var(--text-primary)]">Existing Problems</h2>
-          <div className="space-y-3 pr-2" style={{ maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-            {problems.map((problem) => (
-              <div
-                key={problem._id}
-                className="flex items-start justify-between rounded-xl border border-white/5 bg-transparent p-5 transition hover:border-white/10"
-              >
-                <div className="space-y-1">
-                  <h3 className="font-bold text-[var(--text-primary)] text-base">{problem.title}</h3>
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-[#06b6d4]">
-                    <span>{problem.problemCode || problem._id.substring(0, 6).toUpperCase()}</span>
-                  </div>
-                  <div className="text-[13px] text-slate-400">
-                    {problem.category || "General"} {problem.companyId ? `• ${problem.companyId}` : ""}
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {problem.tags?.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="rounded border border-white/10 px-2.5 py-1 text-[11px] text-slate-400"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleDeleteProblem(problem._id)}
-                  className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-400 transition hover:bg-red-500/20"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            {problems.length === 0 && (
-              <div className="rounded-xl border border-white/5 bg-transparent p-8 text-center text-sm text-slate-400">
-                No existing problems. Create one to get started.
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );

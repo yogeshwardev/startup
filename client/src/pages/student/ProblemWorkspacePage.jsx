@@ -133,7 +133,9 @@ const ProblemWorkspacePage = () => {
   }, [contestId, slug]);
 
   const currentCode = codeMap[language] || "";
-  const alreadySubmitted = submissions.some(sub => sub.status === "Accepted");
+  const MAX_ATTEMPTS = 10;
+  const attemptCount = submissions.length;
+  const maxAttemptsReached = attemptCount >= MAX_ATTEMPTS;
   const workspaceLocked = false;
 
   const handleCodeChange = (nextCode) => {
@@ -194,11 +196,25 @@ const ProblemWorkspacePage = () => {
         contestId: contestId || undefined,
       });
       setSubmitResult(data);
-      const refreshed = await http.get(`/submissions/problem/${problem._id}`, {
-        params: contestId ? { contestId } : {},
-      });
-      setSubmissions(refreshed.data);
       setActiveTab("Submissions");
+
+      // Poll until the newly queued submission is evaluated (max 30s)
+      const submittedId = data.submissionId;
+      const MAX_POLLS = 20;
+      const POLL_INTERVAL_MS = 1500;
+      for (let i = 0; i < MAX_POLLS; i++) {
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+        const refreshed = await http.get(`/submissions/problem/${problem._id}`, {
+          params: contestId ? { contestId } : {},
+        });
+        setSubmissions(refreshed.data);
+        const thisSubmission = refreshed.data.find(
+          (s) => s._id === submittedId
+        );
+        if (thisSubmission && thisSubmission.status !== "Queued") {
+          break; // Evaluation done — stop polling
+        }
+      }
     } catch (requestError) {
       setSubmitResult({
         error: requestError.response?.data?.message || "Submission failed.",
@@ -268,54 +284,72 @@ const ProblemWorkspacePage = () => {
 
     return submissions.length ? (
       <div className="space-y-2">
-        {submissions.map((submission) => (
-          <div
-            key={submission._id}
-            className="rounded-lg p-3 text-sm cursor-pointer hover:bg-white/[0.02] transition"
-            style={{ border: "1px solid var(--border-subtle)" }}
-            onClick={() => {
-              if (submission.code) {
-                setCodeMap((prev) => ({ ...prev, [submission.language]: submission.code }));
-                setLanguage(submission.language);
-              }
-            }}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <span className={`font-semibold ${submission.status === "Accepted" ? "text-emerald-400" : "text-rose-400"}`}>
-                {submission.status}
-              </span>
-              <span style={{ color: "var(--text-muted)" }}>
-                {submission.language.toUpperCase()}
-              </span>
-            </div>
-            <p className="mt-1.5" style={{ color: "var(--text-muted)" }}>
-              {new Date(submission.createdAt).toLocaleString()}
-            </p>
-            
-            {submission.status !== "Accepted" && submission.testResults?.length > 0 && (
-              <div className="mt-3 space-y-2 pt-3" style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                <p className="text-xs font-semibold text-rose-400 uppercase tracking-wider">Failed Test Cases (Hidden)</p>
-                {submission.testResults.filter(t => t.status !== "Accepted").slice(0, 2).map((test, idx) => (
-                  <div key={idx} className="bg-rose-500/8 rounded-lg p-3 text-xs font-mono space-y-1.5"
-                    style={{ border: "1px solid rgba(239, 68, 68, 0.1)" }}>
-                    <div>
-                      <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>INPUT:</span>
-                      <span style={{ color: "var(--text-secondary)" }}>{test.input}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>EXPECTED:</span>
-                      <span className="text-emerald-400">{test.expectedOutput}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>YOUR OUTPUT:</span>
-                      <span className="text-rose-400">{test.actualOutput || "No output"}</span>
-                    </div>
-                  </div>
-                ))}
+        {submissions.map((submission, index) => {
+          const isLatest = index === 0;
+          return (
+            <div
+              key={submission._id}
+              className="rounded-lg p-3 text-sm cursor-pointer hover:bg-white/[0.02] transition"
+              style={{ border: `1px solid ${isLatest ? "rgba(99,102,241,0.25)" : "var(--border-subtle)"}` }}
+              onClick={() => {
+                if (submission.code) {
+                  setCodeMap((prev) => ({ ...prev, [submission.language]: submission.code }));
+                  setLanguage(submission.language);
+                }
+              }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold ${
+                    submission.status === "Accepted"
+                      ? "text-emerald-400"
+                      : submission.status === "Queued"
+                      ? "text-yellow-400 animate-pulse"
+                      : "text-rose-400"
+                  }`}>
+                    {submission.status === "Queued" ? "⏳ Evaluating..." : submission.status}
+                  </span>
+                  {isLatest && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider"
+                      style={{ background: "rgba(99,102,241,0.12)", color: "#818cf8" }}>
+                      Latest
+                    </span>
+                  )}
+                </div>
+                <span style={{ color: "var(--text-muted)" }}>
+                  {submission.language.toUpperCase()}
+                </span>
               </div>
-            )}
-          </div>
-        ))}
+              <p className="mt-1.5" style={{ color: "var(--text-muted)" }}>
+                {new Date(submission.createdAt).toLocaleString()}
+              </p>
+
+              {/* Only show failed test cases for the most recent submission */}
+              {isLatest && submission.status !== "Accepted" && submission.status !== "Queued" && submission.testResults?.length > 0 && (
+                <div className="mt-3 space-y-2 pt-3" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                  <p className="text-xs font-semibold text-rose-400 uppercase tracking-wider">Failed Test Cases</p>
+                  {submission.testResults.filter(t => t.status !== "Accepted").slice(0, 2).map((test, idx) => (
+                    <div key={idx} className="rounded-lg p-3 text-xs font-mono space-y-1.5"
+                      style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239, 68, 68, 0.15)" }}>
+                      <div>
+                        <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>INPUT:</span>
+                        <span style={{ color: "var(--text-secondary)" }}>{test.input || "(empty)"}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>EXPECTED:</span>
+                        <span className="text-emerald-400">{test.expectedOutput}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold block mb-0.5" style={{ color: "var(--text-muted)" }}>YOUR OUTPUT:</span>
+                        <span className="text-rose-400">{test.actualOutput || "No output"}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     ) : (
       <EmptyState
@@ -434,7 +468,7 @@ const ProblemWorkspacePage = () => {
               value={currentCode}
               onChange={handleCodeChange}
               options={{
-                readOnly: alreadySubmitted || workspaceLocked,
+                readOnly: workspaceLocked,
               }}
             />
           </div>
@@ -504,8 +538,9 @@ const ProblemWorkspacePage = () => {
             {/* Action Bar */}
             <div className="flex items-center justify-between px-4 py-2.5">
               <div className="flex items-center gap-3">
-                 {submitResult?.submissionId && <span className="text-xs text-emerald-400">Submission queued: {submitResult.submissionId}</span>}
+                 {submitResult?.submissionId && <span className="text-xs text-emerald-400">Submission queued ✓ &nbsp;|&nbsp; Attempt {attemptCount}/{MAX_ATTEMPTS}</span>}
                  {submitResult?.error && <span className="text-xs text-rose-400">{submitResult.error}</span>}
+                 {!submitResult && attemptCount > 0 && <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Attempt {attemptCount}/{MAX_ATTEMPTS}</span>}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -519,11 +554,11 @@ const ProblemWorkspacePage = () => {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={submitting || workspaceLocked || alreadySubmitted}
+                  disabled={submitting || workspaceLocked || maxAttemptsReached}
                   className="flex items-center gap-1.5 rounded-md bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-semibold text-[var(--text-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="h-3.5 w-3.5" />
-                  {alreadySubmitted ? "Solved" : submitting ? "Submitting..." : "Submit"}
+                  {maxAttemptsReached ? "Max Attempts Reached" : submitting ? "Submitting..." : `Submit (${attemptCount}/${MAX_ATTEMPTS})`}
                 </button>
               </div>
             </div>

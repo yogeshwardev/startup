@@ -54,6 +54,7 @@ const submissionSchema = new mongoose.Schema(
     stderr: { type: String, default: "" },
     testResults: { type: [testResultSchema], default: [] },
     isDailyChallenge: { type: Boolean, default: false },
+    isFirstSubmission: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -4,6 +4,7 @@ import { DailyChallenge } from "../models/DailyChallenge.js";
 import { executeCode } from "./executionService.js";
 import { buildDepartmentWar, buildLeaderboards } from "./leaderboardService.js";
 import { emitLeaderboardUpdate } from "./socketService.js";
+import { buildExecutableCode } from "../utils/codeInjection.js";
 
 const difficultyScore = {
   Easy: 10,
@@ -29,11 +30,11 @@ export const evaluateSubmission = async ({ submissionId }) => {
 
   let finalCode = submission.code;
   if (problem.driverCode?.[submission.language]) {
-    const driver = problem.driverCode[submission.language];
-    const marker = submission.language === "python" ? "# __USER_CODE_HERE__" : "// __USER_CODE_HERE__";
-    if (driver.includes(marker)) {
-      finalCode = driver.replace(marker, finalCode);
-    }
+    finalCode = buildExecutableCode({
+      driverCode: problem.driverCode[submission.language],
+      userCode: finalCode,
+      language: submission.language,
+    });
   }
 
   for (const testCase of tests) {
@@ -75,7 +76,10 @@ export const evaluateSubmission = async ({ submissionId }) => {
   }
 
   const passedCount = results.filter((item) => item.status === "Accepted").length;
-  const score = finalStatus === "Accepted" ? difficultyScore[problem.difficulty] || 0 : 0;
+  // Only award score on the very first submission for this problem
+  const score = (finalStatus === "Accepted" && submission.isFirstSubmission)
+    ? difficultyScore[problem.difficulty] || 0
+    : 0;
   const updated = await Submission.findByIdAndUpdate(
     submissionId,
     {
