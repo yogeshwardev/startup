@@ -35,11 +35,26 @@ const availablePermissions = [
 ];
 
 const generateStrongPassword = () => {
-  const charset =
-    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
-  return Array.from({ length: 12 }, () =>
-    charset[Math.floor(Math.random() * charset.length)]
-  ).join("");
+  const uppers = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const lowers = "abcdefghijkmnopqrstuvwxyz";
+  const numbers = "23456789";
+  const specials = "!@#$%";
+  
+  const getChar = (str) => str[Math.floor(Math.random() * str.length)];
+  
+  const chars = [
+    getChar(uppers),
+    getChar(lowers),
+    getChar(numbers),
+    getChar(specials)
+  ];
+  
+  const all = uppers + lowers + numbers + specials;
+  for (let i = 0; i < 8; i++) {
+    chars.push(getChar(all));
+  }
+  
+  return chars.sort(() => Math.random() - 0.5).join("");
 };
 
 const validatePassword = (password) =>
@@ -706,7 +721,7 @@ const UserManagementPage = () => {
                   registrationNumber: event.target.value.toUpperCase(),
                 }))
               }
-              placeholder="Registration number"
+              placeholder={editingUser.role === "TEACHER" ? "Teacher ID" : "Registration number"}
             />
             <select
               className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-white/5"
@@ -739,19 +754,23 @@ const UserManagementPage = () => {
                 </option>
               ))}
             </select>
-            <input
-              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-white/5"
-              type="number"
-              min="1"
-              max="6"
-              value={editingUser.year}
-              onChange={(event) =>
-                setEditingUser((current) => ({
-                  ...current,
-                  year: Number(event.target.value),
-                }))
-              }
-            />
+            {editingUser.role !== "TEACHER" ? (
+              <input
+                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-white/5"
+                type="number"
+                min="1"
+                max="6"
+                value={editingUser.year}
+                onChange={(event) =>
+                  setEditingUser((current) => ({
+                    ...current,
+                    year: Number(event.target.value),
+                  }))
+                }
+              />
+            ) : (
+              <div className="hidden"></div>
+            )}
             <label className="card-surface flex items-center gap-3 rounded-2xl px-4 py-3 text-sm">
               <input
                 type="checkbox"

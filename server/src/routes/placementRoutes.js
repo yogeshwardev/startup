@@ -4,6 +4,7 @@ import {
   getAllCompanies,
   getCompanyDetails,
   getCompanyQuestions,
+  getCompanyProblems,
   getQuestion,
   getQuestionsByTopic,
   getCompanyTopics,
@@ -19,6 +20,8 @@ import {
   updateQuestion,
   deleteQuestion,
   getCompanyQuestionsAdmin,
+  searchProblemsForCompany,
+  updateCompanyProblemAssignments,
 } from "../controllers/placementController.js";
 import { protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
@@ -39,6 +42,12 @@ router.get(
   "/companies/:name/questions",
   validate([param("name").trim().notEmpty().withMessage("Company name is required.")]),
   getCompanyQuestions
+);
+
+router.get(
+  "/companies/:name/problems",
+  validate([param("name").trim().notEmpty().withMessage("Company name is required.")]),
+  getCompanyProblems
 );
 
 router.get(
@@ -100,7 +109,7 @@ router.post(
   "/admin/companies",
   validate([
     body("name").trim().notEmpty().withMessage("Company name is required."),
-    body("type").isIn(["Mass Hiring", "Product Based"]).withMessage("Invalid company type."),
+    body("type").isIn(["Mass Hiring", "Product Based", "Startup", "Consulting"]).withMessage("Invalid company type."),
   ]),
   createCompany
 );
@@ -144,6 +153,23 @@ router.get(
   "/admin/companies/:name/questions",
   validate([param("name").trim().notEmpty().withMessage("Company name is required.")]),
   getCompanyQuestionsAdmin
+);
+
+router.get(
+  "/admin/companies/:name/problems",
+  validate([param("name").trim().notEmpty().withMessage("Company name is required.")]),
+  searchProblemsForCompany
+);
+
+router.patch(
+  "/admin/companies/:name/problems",
+  validate([
+    param("name").trim().notEmpty().withMessage("Company name is required."),
+    body("problemIds").isArray({ min: 1 }).withMessage("At least one problem is required."),
+    body("problemIds.*").isMongoId().withMessage("Valid problem IDs are required."),
+    body("action").optional().isIn(["add", "remove"]).withMessage("Invalid assignment action."),
+  ]),
+  updateCompanyProblemAssignments
 );
 
 export default router;

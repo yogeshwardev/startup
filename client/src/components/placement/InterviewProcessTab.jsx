@@ -1,46 +1,8 @@
 import { CheckCircle2, Clock, Target } from "lucide-react";
 
-const InterviewProcessTab = ({ companyId }) => {
-  // Sample company names mapping
-  const companyNames = {
-    1: "TCS",
-    2: "Infosys",
-    3: "Wipro",
-    4: "Accenture",
-    5: "Amazon",
-    6: "Microsoft",
-    7: "Google",
-  };
-
-  const companyName = companyNames[parseInt(companyId)] || "Company";
-
-  // Default interview stages
-  const stages = [
-    {
-      stage: "Online Assessment",
-      description: "Test your fundamentals with aptitude and coding challenges",
-      duration: "90-120 minutes",
-      focus: ["DSA", "Aptitude", "Reasoning"],
-    },
-    {
-      stage: "Coding Round",
-      description: "Solve 2-3 medium to hard coding problems with explanation",
-      duration: "90 minutes",
-      focus: ["Data Structures", "Algorithms", "Problem Solving"],
-    },
-    {
-      stage: "Technical Interview",
-      description: "Discuss your projects and technical knowledge",
-      duration: "45-60 minutes",
-      focus: ["Core CS", "System Design", "Projects"],
-    },
-    {
-      stage: "HR Interview",
-      description: "Communication, motivation, and cultural fit assessment",
-      duration: "30-45 minutes",
-      focus: ["Communication", "Soft Skills", "Motivation"],
-    },
-  ];
+const InterviewProcessTab = ({ company }) => {
+  const companyName = company?.name || "Company";
+  const stages = company?.interviewProcess || [];
 
   return (
     <div className="space-y-6">
@@ -77,7 +39,7 @@ const InterviewProcessTab = ({ companyId }) => {
 
                   {/* Focus Areas */}
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {stage.focus.map((item, idx) => (
+                    {(stage.tags || []).map((item, idx) => (
                       <span
                         key={idx}
                         className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium"
@@ -142,20 +104,8 @@ const InterviewProcessTab = ({ companyId }) => {
       {/* Statistics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Avg. Interview Duration</p>
-          <p className="text-2xl font-bold text-brand-600 dark:text-brand-400">~4-5 hrs</p>
-        </div>
-        <div className="app-surface rounded-xl border p-5 text-center">
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Interview Rounds</p>
-          <p className="text-2xl font-bold text-brand-600 dark:text-brand-400">4</p>
-        </div>
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Selection Rate</p>
-          <p className="text-2xl font-bold text-brand-600 dark:text-brand-400">~2-5%</p>
-        </div>
-        <div className="app-surface rounded-xl border p-5 text-center">
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Prep Time</p>
-          <p className="text-2xl font-bold text-brand-600 dark:text-brand-400">2-3 mo</p>
+          <p className="text-2xl font-bold text-brand-600 dark:text-brand-400">{stages.length}</p>
         </div>
       </div>
     </div>

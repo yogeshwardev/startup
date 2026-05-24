@@ -12,6 +12,7 @@ import submissionRoutes from "./submissionRoutes.js";
 import teacherRoutes from "./teacherRoutes.js";
 import adminRoutes from "./adminRoutes.js";
 import placementRoutes from "./placementRoutes.js";
+import paymentRoutes from "./payment.routes.js";
 
 const router = Router();
 
@@ -24,9 +25,10 @@ router.use("/profiles", profileRoutes);
 router.use("/admin/problems", adminProblemRoutes);
 router.use("/contests", contestRoutes);
 router.use("/submissions", submissionRoutes);
+router.use("/placement", placementRoutes);
 router.use("/", adminRoutes);
 router.use("/", messageRoutes);
 router.use("/", platformRoutes);
-router.use("/placement", placementRoutes);
+router.use("/payment", paymentRoutes);
 
 export default router;

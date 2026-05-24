@@ -22,6 +22,9 @@ const questionSchema = new mongoose.Schema(
       enum: ["easy", "medium", "hard"],
       required: true,
     },
+    // For Aptitude Questions
+    options: [String],
+    correctOptionIndex: Number,
     title: {
       type: String,
       required: true,

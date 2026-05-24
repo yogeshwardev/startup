@@ -18,7 +18,7 @@ const ExistingProblemsPage = () => {
   const loadProblems = async () => {
     try {
       setLoading(true);
-      const { data } = await http.get("/problems");
+      const { data } = await http.get("/problems?status=all");
       setProblems(data);
     } catch (error) {
       toast.error(

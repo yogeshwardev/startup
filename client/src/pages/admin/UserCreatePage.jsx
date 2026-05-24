@@ -89,7 +89,10 @@ const UserCreatePage = () => {
     }
 
     if (!newUser.registrationNumber.trim()) {
-      toast.error("Registration number required", "Enter a valid registration number.");
+      toast.error(
+        newUser.role === "TEACHER" ? "Teacher ID required" : "Registration number required",
+        newUser.role === "TEACHER" ? "Enter a valid Teacher ID." : "Enter a valid registration number."
+      );
       return false;
     }
 
@@ -244,7 +247,7 @@ const UserCreatePage = () => {
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Registration number
+                {newUser.role === "TEACHER" ? "Teacher ID" : "Registration number"}
               </label>
               <input
                 className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none uppercase dark:border-white/10 dark:bg-white/5"
@@ -255,7 +258,7 @@ const UserCreatePage = () => {
                     registrationNumber: event.target.value.toUpperCase(),
                   }))
                 }
-                placeholder="23CSE1021"
+                placeholder={newUser.role === "TEACHER" ? "T12345" : "23CSE1021"}
               />
             </div>
             <div>
@@ -289,24 +292,26 @@ const UserCreatePage = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Year
-              </label>
-              <input
-                className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
-                type="number"
-                min="1"
-                max="6"
-                value={newUser.year}
-                onChange={(event) =>
-                  setNewUser((current) => ({
-                    ...current,
-                    year: Number(event.target.value),
-                  }))
-                }
-              />
-            </div>
+            {newUser.role !== "TEACHER" && (
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Year
+                </label>
+                <input
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none dark:border-white/10 dark:bg-white/5"
+                  type="number"
+                  min="1"
+                  max="6"
+                  value={newUser.year}
+                  onChange={(event) =>
+                    setNewUser((current) => ({
+                      ...current,
+                      year: Number(event.target.value),
+                    }))
+                  }
+                />
+              </div>
+            )}
             <div className="md:col-span-2">
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Role

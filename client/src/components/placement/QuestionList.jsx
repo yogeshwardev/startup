@@ -25,11 +25,7 @@ const QuestionList = ({ company, type }) => {
         console.log("Topics fetched:", data);
         const topicsList = data.topics || [];
         setTopics(topicsList);
-        // Set first topic as selected by default
-        if (topicsList.length > 0) {
-          console.log("Setting selected topic to:", topicsList[0]);
-          setSelectedTopic(topicsList[0]);
-        }
+        setSelectedTopic("all");
       } catch (error) {
         console.error("Failed to load topics:", error);
       }
@@ -46,7 +42,7 @@ const QuestionList = ({ company, type }) => {
       try {
         setLoading(true);
         const query = { type, limit: 100 };
-        query.topic = selectedTopic;
+        if (selectedTopic && selectedTopic !== "all") query.topic = selectedTopic;
         if (selectedDifficulty !== "all") query.difficulty = selectedDifficulty;
 
         console.log("Fetching questions with query:", query, "for company:", company.name);
@@ -116,6 +112,7 @@ const QuestionList = ({ company, type }) => {
             onChange={(e) => setSelectedTopic(e.target.value)}
             className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-brand-500 transition"
           >
+            <option value="all">All Topics</option>
             {topics.map((topic) => (
               <option key={topic} value={topic}>
                 {topic}

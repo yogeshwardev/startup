@@ -10,7 +10,13 @@ import UserCreatePage from "./pages/admin/UserCreatePage";
 import UserManagementPage from "./pages/admin/UserManagementPage";
 import CompanyManagementPage from "./pages/admin/CompanyManagementPage";
 import QuestionManagementPage from "./pages/admin/QuestionManagementPage";
-import AuthPage from "./pages/AuthPage";
+import PaymentManagementPage from "./pages/admin/PaymentManagementPage";
+import LandingPage from "./pages/LandingPage";
+import PricingSelectionPage from "./pages/PricingSelectionPage";
+import AboutPage from "./pages/legal/AboutPage";
+import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
+import TermsPage from "./pages/legal/TermsPage";
+import RefundPolicyPage from "./pages/legal/RefundPolicyPage";
 import AnalyticsPage from "./pages/shared/AnalyticsPage";
 import AnnouncementManagementPage from "./pages/shared/AnnouncementManagementPage";
 import ConnectionsPage from "./pages/shared/ConnectionsPage";
@@ -44,12 +50,25 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
       <Route
         path="/"
         element={
-          <ProtectedRoute>
-            <Navigate to={user?.role === "ADMIN" ? "/admin" : user?.role === "TEACHER" ? "/teacher" : "/dashboard"} replace />
+          user ? (
+            <Navigate to={user.role === "ADMIN" ? "/admin" : user.role === "TEACHER" ? "/teacher" : "/dashboard"} replace />
+          ) : (
+            <LandingPage />
+          )
+        }
+      />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/refund" element={<RefundPolicyPage />} />
+      <Route
+        path="/select-plan"
+        element={
+          <ProtectedRoute roles={["STUDENT"]} requirePayment={false}>
+            <PricingSelectionPage />
           </ProtectedRoute>
         }
       />
@@ -294,6 +313,16 @@ const App = () => {
         }
       />
       <Route
+        path="/admin/payments"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <AppShell>
+              <PaymentManagementPage />
+            </AppShell>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/users/new"
         element={
           <ProtectedRoute roles={["ADMIN"]}>
@@ -343,16 +372,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/admin/mock-tests"
-        element={
-          <ProtectedRoute roles={["ADMIN"]}>
-            <AppShell>
-              <MockTestManagementPage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
+
       <Route
         path="/admin/departments"
         element={
@@ -383,6 +403,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/admin/placement/companies"
         element={
@@ -393,16 +414,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/admin/placement/questions"
-        element={
-          <ProtectedRoute roles={["ADMIN"]}>
-            <AppShell>
-              <QuestionManagementPage />
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
+
       <Route
         path="/placement"
         element={

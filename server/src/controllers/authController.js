@@ -15,6 +15,9 @@ const buildAuthResponse = (user) => ({
     role: user.role,
     department: user.department,
     year: user.year,
+    phone: user.phone,
+    isPaid: user.isPaid,
+    planType: user.planType,
   },
 });
 
@@ -28,6 +31,14 @@ export const register = catchAsync(async (req, res) => {
   const existingRegistration = await User.findOne({ registrationNumber });
   if (existingRegistration) {
     throw new ApiError(409, "Registration number already exists.");
+  }
+
+  if (req.body.email.toLowerCase().endsWith("@gmail.com")) {
+    throw new ApiError(400, "Personal Gmail accounts are not allowed. Please use your college email.");
+  }
+
+  if (!req.body.phone) {
+    throw new ApiError(400, "Phone number is required.");
   }
 
   // Self-registration is intentionally locked to students. Elevated roles must be assigned by admin.

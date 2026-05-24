@@ -90,9 +90,16 @@ export const getProblems = catchAsync(async (req, res) => {
   }));
 
   // Automatically hide solved problems unless explicitly requesting them
-  const filtered = statusFilter
-    ? decorated.filter((problem) => (statusFilter.toLowerCase() === "solved" ? problem.solved : !problem.solved))
-    : decorated.filter((problem) => !problem.solved);
+  let filtered = decorated;
+  if (statusFilter) {
+    if (statusFilter.toLowerCase() === "solved") {
+      filtered = decorated.filter((p) => p.solved);
+    } else if (statusFilter.toLowerCase() === "unsolved") {
+      filtered = decorated.filter((p) => !p.solved);
+    }
+  } else {
+    filtered = decorated.filter((p) => !p.solved);
+  }
 
   res.json(filtered);
 });

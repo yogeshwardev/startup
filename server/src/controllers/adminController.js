@@ -3,6 +3,7 @@ import { ActivityLog } from "../models/ActivityLog.js";
 import { User } from "../models/User.js";
 import { MockTest } from "../models/MockTest.js";
 import { Problem } from "../models/Problem.js";
+import { ExamSubmission } from "../models/ExamSubmission.js";
 import { getAdminAnalytics } from "../services/analyticsService.js";
 import { logActivity } from "../services/activityLogService.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -224,6 +225,18 @@ export const updateUser = catchAsync(async (req, res) => {
     if (Array.isArray(req.body.permissions)) {
       target.permissions = req.body.permissions;
     }
+    if (typeof req.body.isPaid === "boolean") {
+      target.isPaid = req.body.isPaid;
+    }
+    if (req.body.planType) {
+      target.planType = req.body.planType;
+    }
+    if (req.body.paymentId !== undefined) {
+      target.paymentId = req.body.paymentId;
+    }
+    if (req.body.paymentTime) {
+      target.paymentTime = req.body.paymentTime;
+    }
   }
 
   await target.save();
@@ -419,10 +432,14 @@ export const getAllMockTests = catchAsync(async (req, res) => {
 });
 
 export const createMockTest = catchAsync(async (req, res) => {
-  const { title, durationMinutes, company, problemIds } = req.body;
+  const { title, durationMinutes, company, problemIds, language, scheduledFor } = req.body;
 
   if (!title || !durationMinutes || !problemIds || problemIds.length === 0) {
     throw new ApiError(400, "Title, duration, and at least one problem are required.");
+  }
+
+  if (!language) {
+    throw new ApiError(400, "Language is required.");
   }
 
   const problems = await Problem.find({ _id: { $in: problemIds } }).select("_id");
@@ -435,6 +452,8 @@ export const createMockTest = catchAsync(async (req, res) => {
     title,
     durationMinutes,
     company: company || "",
+    language,
+    scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
     questions: problemIds.map((problemId, index) => ({
       type: "coding",
       prompt: "",
@@ -449,7 +468,7 @@ export const createMockTest = catchAsync(async (req, res) => {
 
 export const updateMockTest = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { title, durationMinutes, company, problemIds } = req.body;
+  const { title, durationMinutes, company, problemIds, language, scheduledFor } = req.body;
 
   const mockTest = await MockTest.findById(id);
   if (!mockTest) {
@@ -459,6 +478,8 @@ export const updateMockTest = catchAsync(async (req, res) => {
   if (title) mockTest.title = title;
   if (durationMinutes) mockTest.durationMinutes = durationMinutes;
   if (company !== undefined) mockTest.company = company;
+  if (language) mockTest.language = language;
+  if (scheduledFor !== undefined) mockTest.scheduledFor = scheduledFor ? new Date(scheduledFor) : null;
 
   if (problemIds && problemIds.length > 0) {
     const problems = await Problem.find({ _id: { $in: problemIds } }).select("_id");
@@ -489,4 +510,55 @@ export const deleteMockTest = catchAsync(async (req, res) => {
   }
 
   res.json({ message: "Mock test deleted successfully." });
+});
+
+// Exam Student Submissions (teacher/admin analytics)
+export const getExamSubmissions = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const exam = await MockTest.findById(id).populate("questions.problemId", "title difficulty slug problemCode");
+  if (!exam) {
+    throw new ApiError(404, "Exam not found.");
+  }
+
+  const submissions = await ExamSubmission.find({ examId: id })
+    .populate("studentId", "name registrationNumber email department year")
+    .sort({ totalScore: -1 });
+
+  res.json({ exam, submissions });
+});
+
+// Student: save exam submission
+export const saveExamSubmission = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { submissions, warnings, terminated, terminationReason } = req.body;
+
+  const exam = await MockTest.findById(id);
+  if (!exam) throw new ApiError(404, "Exam not found.");
+
+  const totalScore = (submissions || []).reduce((sum, s) => sum + (s.score || 0), 0);
+
+  const doc = await ExamSubmission.findOneAndUpdate(
+    { examId: id, studentId: req.user._id },
+    {
+      examId: id,
+      studentId: req.user._id,
+      submissions: submissions || [],
+      submittedAt: new Date(),
+      totalScore,
+      warnings: warnings || 0,
+      terminated: !!terminated,
+      terminationReason: terminationReason || "",
+    },
+    { upsert: true, new: true }
+  );
+
+  res.json(doc);
+});
+
+// Student: get own exam submission
+export const getMyExamSubmission = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const sub = await ExamSubmission.findOne({ examId: id, studentId: req.user._id });
+  res.json(sub || null);
 });

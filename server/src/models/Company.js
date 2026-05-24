@@ -11,7 +11,7 @@ const companySchema = new mongoose.Schema(
     logo: String,
     type: {
       type: String,
-      enum: ["Mass Hiring", "Product Based"],
+      enum: ["Mass Hiring", "Product Based", "Startup", "Consulting"],
       required: true,
     },
     focusAreas: {
@@ -23,6 +23,8 @@ const companySchema = new mongoose.Schema(
         stage: String,
         description: String,
         duration: String,
+        tags: [String],
+        selectionRate: String,
       },
     ],
     description: String,

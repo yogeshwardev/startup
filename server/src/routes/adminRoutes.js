@@ -14,6 +14,9 @@ import {
   createMockTest,
   updateMockTest,
   deleteMockTest,
+  getExamSubmissions,
+  saveExamSubmission,
+  getMyExamSubmission,
 } from "../controllers/adminController.js";
 import { authorize, protect } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
@@ -110,6 +113,10 @@ router.put(
     body("department").optional().trim().notEmpty().withMessage("Department is required."),
     body("year").optional().isInt({ min: 1, max: 6 }).withMessage("Year must be between 1 and 6."),
     body("isBlocked").optional().isBoolean().withMessage("isBlocked must be boolean."),
+    body("isPaid").optional().isBoolean(),
+    body("planType").optional().isString(),
+    body("paymentId").optional().isString(),
+    body("paymentTime").optional().isISO8601().toDate(),
   ]),
   updateUser
 );
@@ -151,6 +158,8 @@ router.post(
     body("title").trim().notEmpty().withMessage("Title is required."),
     body("durationMinutes").isInt({ min: 1, max: 480 }).withMessage("Duration must be between 1 and 480 minutes."),
     body("company").optional().trim(),
+    body("language").isIn(["python", "cpp", "java", "javascript", "c"]).withMessage("Language is required and must be valid."),
+    body("scheduledFor").optional().isISO8601().withMessage("scheduledFor must be a valid date."),
     body("problemIds").isArray({ min: 1 }).withMessage("At least one problem is required."),
   ]),
   createMockTest
@@ -175,5 +184,10 @@ router.delete(
   authorize("ADMIN", "TEACHER"),
   deleteMockTest
 );
+
+// Exam submission routes
+router.get("/mock-tests/:id/submissions", protect, authorize("ADMIN", "TEACHER"), getExamSubmissions);
+router.post("/mock-tests/:id/submit", protect, saveExamSubmission);
+router.get("/mock-tests/:id/my-submission", protect, getMyExamSubmission);
 
 export default router;

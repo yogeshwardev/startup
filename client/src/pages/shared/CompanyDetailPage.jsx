@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ArrowLeft, BookmarkIcon, Bookmark } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import http from "../../api/http";
 import PageHeader from "../../components/PageHeader";
 import Skeleton from "../../components/Skeleton";
-import SectionCard from "../../components/SectionCard";
-import QuestionList from "../../components/placement/QuestionList";
+import CodingQuestionsTab from "../../components/placement/CodingQuestionsTab";
 import InterviewProcessTab from "../../components/placement/InterviewProcessTab";
 import AptitudeQuestionsTab from "../../components/placement/AptitudeQuestionsTab";
-import InterviewQuestionsTab from "../../components/placement/InterviewQuestionsTab";
 
 const CompanyDetailPage = () => {
   const { name } = useParams();
@@ -22,7 +20,8 @@ const CompanyDetailPage = () => {
     const fetchCompany = async () => {
       try {
         setLoading(true);
-        const { data } = await http.get(`/placement/companies/${name}`);
+        const decodedName = decodeURIComponent(name);
+        const { data } = await http.get(`/placement/companies/${encodeURIComponent(decodedName)}`);
         setCompany(data);
       } catch (error) {
         console.error("Failed to load company:", error);
@@ -48,20 +47,19 @@ const CompanyDetailPage = () => {
     { id: "interview-process", label: "Interview Process" },
     { id: "coding", label: "Coding Questions" },
     { id: "aptitude", label: "Aptitude Questions" },
-    { id: "interview", label: "Interview Questions" },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <PageHeader
         eyebrow={company.type}
         title={company.name}
-        description="Prepare for placement interviews and coding rounds"
+        description={`${company.assignedProblemCount || 0} assigned coding problems, aptitude practice, and interview preparation.`}
         action={
           <button
             onClick={() => navigate("/placement")}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+            className="btn-secondary flex items-center gap-2 px-3.5 py-2 text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -70,16 +68,16 @@ const CompanyDetailPage = () => {
       />
 
       {/* Tab Navigation */}
-      <div className="card-surface rounded-xl border overflow-hidden">
-        <div className="flex gap-0 overflow-x-auto">
+      <div className="card-surface overflow-hidden rounded-lg border">
+        <div className="flex gap-1 overflow-x-auto px-2">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+              className={`border-b-2 px-4 py-3 text-sm font-bold transition whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "border-brand-600 text-brand-600 bg-slate-50"
-                  : "border-transparent text-slate-600 hover:dark:hover:text-slate-200"
+                  ? "border-brand-500 text-brand-400"
+                  : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               {tab.label}
@@ -89,16 +87,13 @@ const CompanyDetailPage = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="card-surface rounded-xl border p-6">
+      <div className="card-surface rounded-lg border p-5">
         {activeTab === "interview-process" && (
           <InterviewProcessTab company={company} />
         )}
-        {activeTab === "coding" && <QuestionList company={company} type="coding" />}
+        {activeTab === "coding" && <CodingQuestionsTab companyName={company.name} />}
         {activeTab === "aptitude" && (
           <AptitudeQuestionsTab company={company} />
-        )}
-        {activeTab === "interview" && (
-          <InterviewQuestionsTab company={company} />
         )}
       </div>
     </div>
@@ -106,6 +101,3 @@ const CompanyDetailPage = () => {
 };
 
 export default CompanyDetailPage;
-
-
-

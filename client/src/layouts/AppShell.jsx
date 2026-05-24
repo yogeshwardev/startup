@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
-  Megaphone
+  Megaphone,
+  CreditCard
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -52,9 +53,8 @@ const roleNavigation = {
     { to: "/admin/departments", label: "Departments", icon: Building2 },
     { to: "/admin/problems", label: "Problems", icon: BookOpen },
     { to: "/admin/contests", label: "Contests", icon: ShieldCheck },
-    { to: "/admin/mock-tests", label: "Mock Tests", icon: ShieldCheck },
-    { to: "/admin/placement/companies", label: "Placement Companies", icon: Briefcase },
-    { to: "/admin/placement/questions", label: "Placement Questions", icon: BookOpen },
+    { to: "/admin/placement/companies", label: "Manage Companies", icon: Building2 },
+    { to: "/admin/payments", label: "Payments", icon: CreditCard },
     { to: "/admin/settings", label: "Settings", icon: Settings },
   ],
 };

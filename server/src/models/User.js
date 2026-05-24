@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     registrationNumber: {
       type: String,
       unique: true,
@@ -58,6 +63,21 @@ const userSchema = new mongoose.Schema(
     isBlocked: {
       type: Boolean,
       default: false,
+    },
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
+    planType: {
+      type: String,
+      enum: ['FREE', 'SEMESTER', 'YEARLY', 'GRADUATION'],
+      default: 'FREE',
+    },
+    paymentId: {
+      type: String,
+    },
+    paymentTime: {
+      type: Date,
     },
     followers: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -100,11 +120,15 @@ userSchema.pre("save", async function hashPassword(next) {
       
       // Get highest problem code
       const highestProblem = await Problem.findOne().sort({ problemCode: -1 }).select("problemCode");
-      const problemCodeNum = highestProblem?.problemCode ? parseInt(highestProblem.problemCode) : 0;
+      let problemCodeNum = 0;
+      if (highestProblem?.problemCode) {
+        const digits = highestProblem.problemCode.replace(/\D/g, "");
+        problemCodeNum = parseInt(digits, 10) || 0;
+      }
       
       // Get highest user code
       const highestUser = await this.constructor.findOne().sort({ userCode: -1 }).select("userCode");
-      const userCodeNum = highestUser?.userCode ? parseInt(highestUser.userCode) : problemCodeNum;
+      const userCodeNum = highestUser?.userCode ? parseInt(highestUser.userCode, 10) : problemCodeNum;
       
       // Generate next user code
       const nextCode = userCodeNum + 1;

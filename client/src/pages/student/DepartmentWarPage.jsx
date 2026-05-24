@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import http from "../../api/http";
 import EmptyState from "../../components/EmptyState";
-import { Swords, Shield, Trophy, TrendingUp, Flame } from "lucide-react";
+import { Swords, Shield, Trophy, TrendingUp, Flame, Crown, Medal } from "lucide-react";
+
+const podiumColors = [
+  { bg: "from-amber-500/20 to-amber-500/5", border: "rgba(245, 158, 11, 0.2)", text: "text-amber-400", icon: Crown, glow: "rgba(245, 158, 11, 0.08)" },
+  { bg: "from-slate-400/15 to-slate-400/5", border: "rgba(148, 163, 184, 0.15)", text: "text-slate-300", icon: Medal, glow: "rgba(148, 163, 184, 0.06)" },
+  { bg: "from-amber-700/15 to-amber-700/5", border: "rgba(180, 83, 9, 0.15)", text: "text-amber-600", icon: Medal, glow: "rgba(180, 83, 9, 0.06)" },
+];
 
 const DepartmentWarPage = () => {
   const [departmentWar, setDepartmentWar] = useState(null);
@@ -10,8 +16,12 @@ const DepartmentWarPage = () => {
     http.get("/department-war").then((response) => setDepartmentWar(response.data));
   }, []);
 
+  const depts = departmentWar?.departments || [];
+  const topThree = depts.slice(0, 3);
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
+
       {/* Header */}
       <div className="animate-slide-up">
         <div className="flex items-center gap-2 mb-2">
@@ -19,21 +29,29 @@ const DepartmentWarPage = () => {
           <span className="text-[10px] font-bold text-rose-400 tracking-[0.2em] uppercase">Department War</span>
         </div>
         <h1 className="text-3xl md:text-4xl font-bold font-display text-[var(--text-primary)] mb-2">
-          Weekly <span style={{
+          Weekly{" "}
+          <span style={{
             background: "linear-gradient(135deg, #ef4444, #f59e0b)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-          }}>Battle</span>
+          }}>
+            Battle
+          </span>
         </h1>
-        <p className="text-sm text-[var(--text-secondary)]">Departments compete every week. Easy = 10pts, Medium = 20pts, Hard = 30pts.</p>
+        <p className="text-sm text-[var(--text-secondary)]">
+          Departments compete every week. Easy = 10pts, Medium = 20pts, Hard = 30pts.
+        </p>
       </div>
 
       {/* Score Info Banner */}
-      <div className="rounded-3xl p-6 animate-slide-up relative overflow-hidden" style={{
-        animationDelay: "100ms",
-        background: "linear-gradient(135deg, rgba(239, 68, 68, 0.06) 0%, rgba(245, 158, 11, 0.04) 100%)",
-        border: "1px solid rgba(239, 68, 68, 0.1)",
-      }}>
+      <div
+        className="rounded-3xl p-6 animate-slide-up relative overflow-hidden"
+        style={{
+          animationDelay: "80ms",
+          background: "linear-gradient(135deg, rgba(239, 68, 68, 0.06) 0%, rgba(245, 158, 11, 0.04) 100%)",
+          border: "1px solid rgba(239, 68, 68, 0.1)",
+        }}
+      >
         <Shield className="absolute right-6 top-1/2 -translate-y-1/2 w-24 h-24 text-rose-500/5" strokeWidth={0.8} />
         <div className="flex flex-wrap gap-8 relative z-10">
           {[
@@ -50,28 +68,66 @@ const DepartmentWarPage = () => {
         </div>
       </div>
 
+      {/* Top 3 Podium — matching Leaderboard page style */}
+      {topThree.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger-children" style={{ animationDelay: "100ms" }}>
+          {topThree.map((entry, index) => {
+            const style = podiumColors[index];
+            const PodiumIcon = style.icon;
+            return (
+              <div
+                key={entry._id}
+                className={`rounded-3xl p-6 text-center relative overflow-hidden transition-all ${
+                  index === 0 ? "sm:order-2 sm:-mt-4" : index === 1 ? "sm:order-1" : "sm:order-3"
+                }`}
+                style={{
+                  background: `linear-gradient(135deg, ${style.glow}, transparent)`,
+                  border: `1px solid ${style.border}`,
+                }}
+              >
+                <div className={`w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-gradient-to-br ${style.bg}`}>
+                  <PodiumIcon className={`w-6 h-6 ${style.text}`} />
+                </div>
+                <p className={`text-2xl font-bold font-display ${style.text} mb-1`}>#{index + 1}</p>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1 line-clamp-1">{entry._id}</h3>
+                <p className="text-xs text-[var(--text-secondary)] mb-3">{entry.solved} problems solved</p>
+                <p className="text-rose-400 font-bold text-lg">{entry.points} pts</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+
         {/* Department Leaderboard */}
         <div className="card rounded-3xl p-6 animate-slide-up" style={{ animationDelay: "150ms" }}>
           <div className="flex items-center gap-2 mb-5">
             <Trophy className="w-4 h-4 text-amber-400" />
             <h3 className="text-base font-bold font-display text-[var(--text-primary)]">Department Leaderboard</h3>
           </div>
-          {departmentWar?.departments?.length ? (
+          {depts.length ? (
             <div className="space-y-3">
-              {departmentWar.departments.map((entry, index) => {
-                const maxPts = departmentWar.departments[0]?.points || 1;
+              {depts.map((entry, index) => {
+                const maxPts = depts[0]?.points || 1;
                 const pct = Math.round((entry.points / maxPts) * 100);
                 const isFirst = index === 0;
                 return (
-                  <div key={entry._id} className="rounded-xl p-4 transition-all hover:bg-white/[0.02]"
-                    style={{ border: `1px solid ${isFirst ? "rgba(245, 158, 11, 0.12)" : "rgba(100, 120, 200, 0.04)"}` }}>
+                  <div
+                    key={entry._id}
+                    className="rounded-xl p-4 transition-all hover:bg-white/[0.02]"
+                    style={{ border: `1px solid ${isFirst ? "rgba(245, 158, 11, 0.12)" : "rgba(100, 120, 200, 0.04)"}` }}
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
-                        <span className={`text-sm font-bold ${isFirst ? "text-amber-400" : "text-[var(--text-muted)]"}`}>#{index + 1}</span>
+                        <span className={`text-sm font-bold ${isFirst ? "text-amber-400" : "text-[var(--text-muted)]"}`}>
+                          #{index + 1}
+                        </span>
                         <p className="text-sm font-semibold text-[var(--text-primary)]">{entry._id}</p>
                       </div>
-                      <p className={`text-lg font-bold ${isFirst ? "text-amber-400" : "text-brand-400"}`}>{entry.points} pts</p>
+                      <p className={`text-lg font-bold ${isFirst ? "text-amber-400" : "text-brand-400"}`}>
+                        {entry.points} pts
+                      </p>
                     </div>
                     <div className="w-full h-2 rounded-full bg-white/[0.04] overflow-hidden">
                       <div
@@ -80,7 +136,7 @@ const DepartmentWarPage = () => {
                           width: `${pct}%`,
                           background: isFirst
                             ? "linear-gradient(90deg, #f59e0b, #ef4444)"
-                            : "linear-gradient(90deg, #6366f1, #06b6d4)",
+                            : "linear-gradient(90deg, var(--brand-600), var(--brand-400))",
                         }}
                       />
                     </div>
@@ -103,11 +159,14 @@ const DepartmentWarPage = () => {
           {departmentWar?.topContributors?.length ? (
             <div className="space-y-2.5">
               {departmentWar.topContributors.map((entry, index) => (
-                <div key={`${entry._id.userId}-${index}`} className="rounded-xl p-4 flex items-center justify-between hover:bg-white/[0.02] transition-all"
-                  style={{ border: "1px solid rgba(100, 120, 200, 0.04)" }}>
+                <div
+                  key={`${entry._id.userId}-${index}`}
+                  className="rounded-xl p-4 flex items-center justify-between hover:bg-white/[0.02] transition-all"
+                  style={{ border: "1px solid rgba(100, 120, 200, 0.04)" }}
+                >
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-[var(--text-muted)] w-7 text-center">#{index + 1}</span>
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/20 to-accent/10 flex items-center justify-center text-xs font-bold text-brand-400">
+                    <div className="w-9 h-9 rounded-full bg-brand-500/10 flex items-center justify-center text-xs font-bold text-brand-400">
                       {entry._id.name?.charAt(0) || "?"}
                     </div>
                     <div>
@@ -132,6 +191,3 @@ const DepartmentWarPage = () => {
 };
 
 export default DepartmentWarPage;
-
-
-

@@ -81,7 +81,7 @@ const CompanyListPage = () => {
         {companies.map((company) => (
           <button
             key={company._id}
-            onClick={() => navigate(`/placement/company/${company.name}`)}
+            onClick={() => navigate(`/placement/company/${encodeURIComponent(company.name)}`)}
             className="card-surface group rounded-xl p-5 text-left transition hover:shadow-md"
           >
             {/* Logo Placeholder */}
@@ -102,6 +102,9 @@ const CompanyListPage = () => {
                 }`}
               >
                 {company.type}
+              </span>
+              <span className="inline-block rounded-full bg-brand-500/10 px-3 py-1 text-xs font-medium text-brand-600">
+                {company.assignedProblemCount || 0} problems
               </span>
             </div>
 

@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import http from "../../api/http";
 import Skeleton from "../../components/Skeleton";
-import { Flame, Zap, Trophy, Target, ArrowRight, GraduationCap, Megaphone } from "lucide-react";
+import { Flame, Zap, Trophy, Target, ArrowRight, GraduationCap, Megaphone, Crown } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import CheckoutButton from "../../components/payment/CheckoutButton";
 
 const StatCardItem = ({ icon: Icon, iconColor, iconBg, label, value }) => (
   <div className="card-interactive p-5 flex items-center gap-4">

@@ -1,4 +1,5 @@
 import { Company } from "../models/Company.js";
+import { Problem } from "../models/Problem.js";
 import { Question } from "../models/Question.js";
 import { UserProgress } from "../models/UserProgress.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -23,13 +24,61 @@ export const getAllCompanies = catchAsync(async (req, res) => {
     return acc;
   }, {});
 
+  const companyProblemCounts = await Problem.aggregate([
+    {
+      $match: {
+        companyId: { $nin: [null, ""] },
+      },
+    },
+    {
+      $group: {
+        _id: "$companyId",
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const problemCountMap = companyProblemCounts.reduce((acc, curr) => {
+    acc[curr._id] = curr.count;
+    return acc;
+  }, {});
+
   const enhancedCompanies = companies.map((c) => ({
     ...c,
     totalQuestions: countMap[c.name] || 0,
+    assignedProblemCount: (problemCountMap[String(c._id)] || 0) + (problemCountMap[c.name] || 0),
   }));
 
   res.json(enhancedCompanies);
 });
+
+const buildCompanyProblemFilter = (company, extraFilter = {}) => ({
+  ...extraFilter,
+  companyId: { $in: [String(company._id), company.name] },
+});
+
+const problemSummaryFields = "problemCode title slug difficulty tags category companyId createdAt";
+
+const getProblemSearchFilter = (search) => {
+  const value = search?.trim();
+  if (!value) {
+    return {};
+  }
+
+  const filters = [
+    { title: { $regex: value, $options: "i" } },
+    { slug: { $regex: value, $options: "i" } },
+    { problemCode: { $regex: value, $options: "i" } },
+    { tags: { $regex: value, $options: "i" } },
+    { category: { $regex: value, $options: "i" } },
+  ];
+
+  if (/^[0-9a-fA-F]{24}$/.test(value)) {
+    filters.push({ _id: value });
+  }
+
+  return { $or: filters };
+};
 
 // Get company by name with questions summary
 export const getCompanyDetails = catchAsync(async (req, res) => {
@@ -114,6 +163,25 @@ export const getQuestion = catchAsync(async (req, res) => {
     ...question,
     starterCode: normalizeStarterCode(question.starterCode),
   });
+});
+
+export const getCompanyProblems = catchAsync(async (req, res) => {
+  const { name } = req.params;
+  const { difficulty } = req.query;
+  const company = await Company.findOne({ name }).lean();
+
+  if (!company) {
+    throw new ApiError(404, "Company not found.");
+  }
+
+  const filter = buildCompanyProblemFilter(company);
+  if (difficulty && difficulty !== "all") {
+    filter.difficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
+  }
+
+  const problems = await Problem.find(filter).select(problemSummaryFields).sort({ difficulty: 1, title: 1 }).lean();
+
+  res.json({ problems });
 });
 
 // Get questions by topic
@@ -378,13 +446,81 @@ export const deleteCompany = catchAsync(async (req, res) => {
 
   // Delete all questions for this company
   await Question.deleteMany({ companyName: name });
+  await Problem.updateMany({ companyId: { $in: [String(company._id), company.name] } }, { $set: { companyId: "" } });
 
   res.json({ message: "Company deleted successfully" });
 });
 
+export const searchProblemsForCompany = catchAsync(async (req, res) => {
+  const { name } = req.params;
+  const { search = "", limit = 40, assigned } = req.query;
+  const company = await Company.findOne({ name }).lean();
+
+  if (!company) {
+    throw new ApiError(404, "Company not found.");
+  }
+
+  const companyIds = [String(company._id), company.name];
+  const filter = getProblemSearchFilter(search);
+
+  if (assigned === "true") {
+    filter.companyId = { $in: companyIds };
+  }
+
+  const problems = await Problem.find(filter)
+    .select(problemSummaryFields)
+    .sort({ createdAt: -1 })
+    .limit(Math.min(Math.max(Number(limit) || 40, 1), 100))
+    .lean();
+
+  res.json({
+    problems: problems.map((problem) => ({
+      ...problem,
+      assigned: companyIds.includes(problem.companyId),
+    })),
+  });
+});
+
+export const updateCompanyProblemAssignments = catchAsync(async (req, res) => {
+  const { name } = req.params;
+  const { problemIds = [], action = "add" } = req.body;
+  const company = await Company.findOne({ name }).lean();
+
+  if (!company) {
+    throw new ApiError(404, "Company not found.");
+  }
+
+  if (!Array.isArray(problemIds) || problemIds.length === 0) {
+    throw new ApiError(400, "At least one problem is required.");
+  }
+
+  const existingProblems = await Problem.find({ _id: { $in: problemIds } }).select("_id");
+  if (existingProblems.length !== problemIds.length) {
+    throw new ApiError(400, "Some problems were not found.");
+  }
+
+  const ids = existingProblems.map((problem) => problem._id);
+
+  if (action === "remove") {
+    await Problem.updateMany(
+      { _id: { $in: ids }, companyId: { $in: [String(company._id), company.name] } },
+      { $set: { companyId: "" } }
+    );
+  } else {
+    await Problem.updateMany({ _id: { $in: ids } }, { $set: { companyId: String(company._id) } });
+  }
+
+  const assignedProblems = await Problem.find(buildCompanyProblemFilter(company))
+    .select(problemSummaryFields)
+    .sort({ difficulty: 1, title: 1 })
+    .lean();
+
+  res.json({ problems: assignedProblems });
+});
+
 // Add question to a company
 export const addQuestion = catchAsync(async (req, res) => {
-  const { companyName, type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints } = req.body;
+  const { companyName, type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints, options, correctOptionIndex } = req.body;
 
   const company = await Company.findOne({ name: companyName });
   if (!company) {
@@ -404,6 +540,8 @@ export const addQuestion = catchAsync(async (req, res) => {
     solution,
     tags,
     hints,
+    options,
+    correctOptionIndex,
   });
 
   res.status(201).json(question);
@@ -412,11 +550,11 @@ export const addQuestion = catchAsync(async (req, res) => {
 // Update a question
 export const updateQuestion = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints } = req.body;
+  const { type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints, options, correctOptionIndex } = req.body;
 
   const question = await Question.findByIdAndUpdate(
     id,
-    { type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints },
+    { type, category, topic, difficulty, title, description, constraints, examples, solution, tags, hints, options, correctOptionIndex },
     { new: true, runValidators: true }
   );
 
